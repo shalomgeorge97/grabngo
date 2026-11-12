@@ -19,6 +19,12 @@ import com.example.grabngo.entity.Reminder;
 import com.example.grabngo.entity.Restaurant;
 import com.example.grabngo.entity.User;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+
+import androidx.annotation.NonNull;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+
 
 @Database(
         entities = {
@@ -69,7 +75,45 @@ public abstract class AppDatabase extends RoomDatabase {
                             context.getApplicationContext(),
                             AppDatabase.class,
                             "grabngo_database"
-                    ).build();
+                    ).addCallback(new RoomDatabase.Callback() {
+
+                                @Override
+                                public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                                    super.onCreate(db);
+
+                                    // Create Manager account
+                                    ContentValues managerValues = new ContentValues();
+                                    managerValues.put("name", "Test Manager");
+                                    managerValues.put("email", "manager@grabngo.com");
+                                    managerValues.put("password", "manager123");
+                                    managerValues.put("address", "Vancouver, BC");
+                                    managerValues.put("role", "MANAGER");
+
+                                    long managerId = db.insert(
+                                            "USER",
+                                            SQLiteDatabase.CONFLICT_ABORT,
+                                            managerValues
+                                    );
+
+                                    // Create Restaurant linked to Manager
+                                    ContentValues restaurantValues = new ContentValues();
+                                    restaurantValues.put("manager_id", managerId);
+                                    restaurantValues.put("restaurant_name", "GrabNGo Restaurant");
+                                    restaurantValues.put("address", "123 Main Street");
+                                    restaurantValues.put("city", "Vancouver");
+                                    restaurantValues.put("contact_info", "604-000-0000");
+                                    restaurantValues.put("opening_hours", "09:00-18:00");
+                                    restaurantValues.put("rating", 4.5);
+
+                                    db.insert(
+                                            "RESTAURANT",
+                                            SQLiteDatabase.CONFLICT_ABORT,
+                                            restaurantValues
+                                    );
+                                }
+
+                            })
+                            .build();
                 }
             }
         }

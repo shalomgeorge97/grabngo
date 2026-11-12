@@ -36,4 +36,6 @@ public interface OrderDao {
     @Query("SELECT * FROM ORDERS WHERE restaurant_id = :restaurantId AND status = :status")
     List<Order> getOrdersByStatus(int restaurantId, String status);
 
+    @Query("UPDATE `ORDERS` SET status = :status WHERE order_id = :orderId")
+    int updateOrderStatus(int orderId, String status);
 }
