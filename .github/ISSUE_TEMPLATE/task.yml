@@ -1,0 +1,40 @@
+name: Task
+description: A screen, feature or piece of work to build
+labels: ["task"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Database
+        - Customer screens
+        - Manager screens
+        - Auth and profile
+        - Notifications
+        - Report and presentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: What needs to be done?
+      description: One or two sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Definition of done
+      description: How will we know it is finished?
+      placeholder: |
+        - [ ] Screen matches the wireframe
+        - [ ] Works with seed data
+        - [ ] Error cases handled
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Depends on / notes
