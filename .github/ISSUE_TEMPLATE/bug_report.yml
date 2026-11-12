@@ -1,0 +1,49 @@
+name: Bug report
+description: Something in the app is broken
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: screen
+    attributes:
+      label: Screen or feature
+      options:
+        - Welcome
+        - Register
+        - Login
+        - Profile
+        - Customer Home
+        - Restaurant Details
+        - Checkout
+        - Order Details
+        - Order History
+        - Manager Food List
+        - Add or Edit Food
+        - Manager Orders
+        - Manager Order Details
+        - Reminders
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Log in as a customer
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual result
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Emulator or device and Android version
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshot or Logcat output
