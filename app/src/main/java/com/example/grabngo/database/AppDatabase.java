@@ -9,6 +9,7 @@ import androidx.room.RoomDatabase;
 import com.example.grabngo.dao.FoodItemDao;
 import com.example.grabngo.dao.OrderDao;
 import com.example.grabngo.dao.OrderItemDao;
+import com.example.grabngo.dao.OrderTransactionDao;
 import com.example.grabngo.dao.ReminderDao;
 import com.example.grabngo.dao.RestaurantDao;
 import com.example.grabngo.dao.UserDao;
@@ -18,12 +19,6 @@ import com.example.grabngo.entity.OrderItem;
 import com.example.grabngo.entity.Reminder;
 import com.example.grabngo.entity.Restaurant;
 import com.example.grabngo.entity.User;
-
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-
-import androidx.annotation.NonNull;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 
 
 @Database(
@@ -55,6 +50,8 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract ReminderDao reminderDao();
 
+    public abstract OrderTransactionDao orderTransactionDao();
+
 
     //Get database instance
     //Use Singleton to reuse one database instance across the app,
@@ -75,45 +72,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             context.getApplicationContext(),
                             AppDatabase.class,
                             "grabngo_database"
-                    ).addCallback(new RoomDatabase.Callback() {
-
-                                @Override
-                                public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                                    super.onCreate(db);
-
-                                    // Create Manager account
-                                    ContentValues managerValues = new ContentValues();
-                                    managerValues.put("name", "Test Manager");
-                                    managerValues.put("email", "manager@grabngo.com");
-                                    managerValues.put("password", "manager123");
-                                    managerValues.put("address", "Vancouver, BC");
-                                    managerValues.put("role", "MANAGER");
-
-                                    long managerId = db.insert(
-                                            "USER",
-                                            SQLiteDatabase.CONFLICT_ABORT,
-                                            managerValues
-                                    );
-
-                                    // Create Restaurant linked to Manager
-                                    ContentValues restaurantValues = new ContentValues();
-                                    restaurantValues.put("manager_id", managerId);
-                                    restaurantValues.put("restaurant_name", "GrabNGo Restaurant");
-                                    restaurantValues.put("address", "123 Main Street");
-                                    restaurantValues.put("city", "Vancouver");
-                                    restaurantValues.put("contact_info", "604-000-0000");
-                                    restaurantValues.put("opening_hours", "09:00-18:00");
-                                    restaurantValues.put("rating", 4.5);
-
-                                    db.insert(
-                                            "RESTAURANT",
-                                            SQLiteDatabase.CONFLICT_ABORT,
-                                            restaurantValues
-                                    );
-                                }
-
-                            })
-                            .build();
+                    ).build();
                 }
             }
         }
@@ -121,4 +80,159 @@ public abstract class AppDatabase extends RoomDatabase {
         return appDatabase;
     }
 
+    public void insertSeedData() {
+
+        if (userDao().isEmailExists("manager@grabngo.com")) {
+            return;
+        }
+
+        // 1. Create Manager account
+        User manager = new User(
+                "Test Manager",
+                "manager@grabngo.com",
+                "manager123",
+                "Vancouver, BC",
+                "MANAGER",
+                null
+        );
+
+        long managerId = userDao().addUser(manager);
+
+
+        // 2. Create Customer account
+        User customer = new User(
+                "Test Customer",
+                "customer@grabngo.com",
+                "customer123",
+                "Vancouver, BC",
+                "CUSTOMER",
+                null
+        );
+
+        userDao().addUser(customer);
+
+
+        // 3. Create Restaurants
+
+        Restaurant restaurant1 = new Restaurant(
+                (int) managerId,
+                "Vancouver Sushi",
+                "100 Robson Street",
+                "Vancouver",
+                "604-111-1111",
+                "09:00-20:00",
+                4.5,
+                null
+        );
+
+        long restaurantId1 = restaurantDao().addRestaurant(restaurant1);
+
+
+        Restaurant restaurant2 = new Restaurant(
+                (int) managerId,
+                "Fresh Bowl Cafe",
+                "200 Granville Street",
+                "Vancouver",
+                "604-222-2222",
+                "08:00-18:00",
+                4.3,
+                null
+        );
+
+        long restaurantId2 = restaurantDao().addRestaurant(restaurant2);
+
+
+        Restaurant restaurant3 = new Restaurant(
+                (int) managerId,
+                "Downtown Bakery",
+                "300 Main Street",
+                "Vancouver",
+                "604-333-3333",
+                "07:00-17:00",
+                4.7,
+                null
+        );
+
+        long restaurantId3 = restaurantDao().addRestaurant(restaurant3);
+
+
+        // 4. Create Food Items
+
+        foodItemDao().addFoodItem(new FoodItem(
+                (int) restaurantId1,
+                "Salmon Sushi Box",
+                "Fresh salmon sushi set",
+                "Japanese",
+                "Salmon, Rice",
+                15.00,
+                8.00,
+                5,
+                "2026-12-01 18:00"
+        ));
+
+        foodItemDao().addFoodItem(new FoodItem(
+                (int) restaurantId1,
+                "California Roll",
+                "California roll with avocado",
+                "Japanese",
+                "Crab, Avocado, Rice",
+                12.00,
+                6.00,
+                4,
+                "2026-12-01 18:00"
+        ));
+
+
+        foodItemDao().addFoodItem(new FoodItem(
+                (int) restaurantId2,
+                "Chicken Rice Bowl",
+                "Rice bowl with grilled chicken",
+                "Rice Bowl",
+                "Chicken, Rice, Vegetables",
+                16.00,
+                9.00,
+                3,
+                "2026-12-01 17:00"
+        ));
+
+        foodItemDao().addFoodItem(new FoodItem(
+                (int) restaurantId2,
+                "Vegetable Salad",
+                "Fresh mixed vegetable salad",
+                "Salad",
+                "Lettuce, Tomato, Cucumber",
+                12.00,
+                7.00,
+                5,
+                "2026-12-01 17:00"
+        ));
+
+
+        foodItemDao().addFoodItem(new FoodItem(
+                (int) restaurantId3,
+                "Croissant Set",
+                "Freshly baked croissants",
+                "Bakery",
+                "Wheat, Butter, Milk",
+                10.00,
+                5.00,
+                6,
+                "2026-12-01 16:00"
+        ));
+
+        foodItemDao().addFoodItem(new FoodItem(
+                (int) restaurantId3,
+                "Muffins (2 pcs)",
+                "Two freshly baked muffins",
+                "Bakery",
+                "Wheat, Eggs, Milk",
+                8.00,
+                4.00,
+                4,
+                "2026-12-01 16:00"
+        ));
+    }
+
 }
+
+

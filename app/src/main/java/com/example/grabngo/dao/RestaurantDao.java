@@ -2,6 +2,7 @@
 package com.example.grabngo.dao;
 
 import androidx.room.Dao;
+import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.example.grabngo.entity.Restaurant;
@@ -11,6 +12,9 @@ import java.util.List;
 @Dao
 public interface RestaurantDao {
 
+    // Insert a new restaurant
+    @Insert
+    long addRestaurant(Restaurant restaurant);
 
     // Get all restaurants
     @Query("SELECT * FROM RESTAURANT")
