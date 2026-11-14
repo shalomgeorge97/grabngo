@@ -1,10 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Home">
+    android:orientation="vertical"
+    android:background="@color/background">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Top bar -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/primary"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:text="@string/home_title"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:ignore="RtlSymmetry,VisualLintSystemUi" />
+
+    <!-- Content area -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.GrabNGo.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/home_search_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                tools:ignore="VisualLintTextFieldSize" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/home_restaurants_heading"
+            android:textAppearance="@style/TextAppearance.GrabNGo.Heading" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvRestaurants"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            tools:ignore="NestedWeights" />
+    </LinearLayout>
+
+<!--     Bottom navigation (add after the menu file exists) -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        app:itemIconTint="@color/bottom_nav_tint"
+        app:itemTextColor="@color/bottom_nav_tint"
+        app:menu="@menu/menu_customer_bottom_nav" />
+
+</LinearLayout>
