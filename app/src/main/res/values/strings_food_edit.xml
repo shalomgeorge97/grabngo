@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="food_add_title">Add Food</string>
+    <string name="food_edit_title">Edit Food</string>
     <string name="food_edit_name">Food name</string>
     <string name="food_edit_name_hint">e.g. Blueberry muffin</string>
     <string name="food_edit_description">Description</string>
