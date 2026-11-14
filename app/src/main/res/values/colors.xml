@@ -12,8 +12,17 @@
     <color name="text_secondary">#6B7280</color>
     <color name="divider">#E5E7EB</color>
     <color name="error">#C62828</color>
+
     <color name="status_pending">#B45309</color>
     <color name="status_accepted">#1565C0</color>
     <color name="status_ready">#00796B</color>
     <color name="status_done">#2E7D32</color>
+    <color name="status_rejected">#C62828</color>
+
+    <!-- Light background per status, used behind the badge text -->
+    <color name="status_pending_bg">#FEF3C7</color>
+    <color name="status_accepted_bg">#E3F2FD</color>
+    <color name="status_ready_bg">#E0F2F1</color>
+    <color name="status_done_bg">#E8F5E9</color>
+    <color name="status_rejected_bg">#FDECEA</color>
 </resources>
