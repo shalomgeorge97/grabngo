@@ -1,6 +1,9 @@
 package com.example.grabngo;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,5 +23,14 @@ public class AddEditFood extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+//        change title of screen based on add or edit food
+//        hide delete buttom based if add food and show on edit food
+
+        AutoCompleteTextView actCategory = findViewById(R.id.actCategory);
+        String[] categories = {"Bakery", "Meals", "Desserts", "Beverages", "Snacks"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_dropdown_item_1line, categories);
+        actCategory.setAdapter(adapter);
     }
 }
