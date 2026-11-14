@@ -1,3 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GrabNGo</string>
+    <!-- Common -->
+    <string name="action_back">Back</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_orders">Orders</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Customer Home (#12) -->
+    <string name="home_title">Find food</string>
+    <string name="home_search_hint">Search by city or location</string>
+    <string name="home_restaurants_heading">Available restaurants</string>
+    <string name="home_no_results">No restaurants found</string>
+    <plurals name="items_available">
+        <item quantity="one">%d item available</item>
+        <item quantity="other">%d items available</item>
+    </plurals>
+    <string name="restaurant_address_format">%1$s, %2$s</string>
+
+    <!-- Restaurant Details (#13) -->
+    <string name="details_title">Restaurant</string>
+    <string name="details_search_hint">Search food</string>
+    <string name="details_filter_category">Category</string>
+    <string name="details_filter_price">Price</string>
+    <string name="details_quantity">Quantity</string>
+    <string name="details_qty_left">Qty left: %d</string>
+    <string name="details_reserve">Reserve</string>
+    <string name="details_no_items">No food items available right now</string>
+
+    <!-- Checkout (#14) -->
+    <string name="checkout_title">Payment</string>
+    <string name="checkout_summary">Order summary</string>
+    <string name="checkout_total">Total</string>
+    <string name="checkout_pickup">Pickup</string>
+    <string name="checkout_delivery">Delivery</string>
+    <string name="checkout_address_hint">Delivery address</string>
+    <string name="checkout_payment_method">Payment method</string>
+    <string name="checkout_card_name_hint">Name on card</string>
+    <string name="checkout_card_number_hint">Card number</string>
+    <string name="checkout_confirm_pay">Confirm and pay</string>
+
+    <!-- Order Details (#15) -->
+    <string name="order_details_title">Order details</string>
+    <string name="order_id_format">Order ID: %d</string>
+    <string name="order_items_heading">Items</string>
+    <string name="order_status_heading">Status</string>
+    <string name="order_reminders_heading">Reminders</string>
+    <string name="order_cancel">Cancel order</string>
+
+    <!-- Order status values -->
+    <string name="status_pending">Pending</string>
+    <string name="status_accepted">Accepted</string>
+    <string name="status_rejected">Rejected</string>
+    <string name="status_ready">Ready</string>
+    <string name="status_picked_up">Picked Up</string>
+    <string name="status_delivered">Delivered</string>
+    <string name="status_cancelled">Cancelled</string>
+
+    <!-- Order History (#16) -->
+    <string name="history_title">Order history</string>
+    <string name="history_empty">No orders yet</string>
+
+    <!-- Price format -->
+    <string name="price_format">$%.2f</string>
+
 </resources>
