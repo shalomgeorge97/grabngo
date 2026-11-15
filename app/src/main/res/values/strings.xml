@@ -78,6 +78,9 @@
     <string name="order_line_one_format">%1s | %2s</string>
     <string name="order_line_two_format">$%.2f | %2s</string>
 
+    <string name="details_rating_format">Rating %.1f</string>
+    <string name="details_select_item">Select at least one item</string>
 
+    <string name="details_not_found">Restaurant not found</string>
 
 </resources>
