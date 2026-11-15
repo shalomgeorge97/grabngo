@@ -85,4 +85,15 @@ public class DummyData {
         item.setFoodId(foodId);
         return item;
     }
+
+    public static FoodItem getFoodItemById(int foodId) {
+        for (int restaurantId = 1; restaurantId <= 3; restaurantId++) {
+            for (FoodItem item : getFoodItems(restaurantId, "")) {
+                if (item.getFoodId() == foodId) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
 }
