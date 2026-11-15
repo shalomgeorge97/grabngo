@@ -1,10 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true"
+    android:clipToPadding="false"
     tools:context=".Welcome">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingStart="28dp"
+        android:paddingTop="42dp"
+        android:paddingEnd="28dp"
+        android:paddingBottom="28dp">
+
+        <FrameLayout
+            android:layout_width="172dp"
+            android:layout_height="172dp"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/bg_logo_panel"
+            android:padding="30dp">
+            <ImageView
+                android:id="@+id/imgWelcomeLogo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/cd_grabngo_logo"
+                android:src="@drawable/ic_grabngo_logo" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/txtWelcomeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:text="@string/welcome_title"
+            android:textColor="@color/grabngo_text"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtWelcomeTagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:gravity="center"
+            android:text="@string/welcome_tagline"
+            android:textColor="#757575"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="68dp" />
+
+        <Button
+            android:id="@+id/btnWelcomeLogin"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:background="@drawable/bg_button_primary"
+            android:backgroundTint="@null"
+            android:text="@string/action_login"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:stateListAnimator="@null"
+            tools:ignore="VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/btnWelcomeRegister"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_button_outline"
+            android:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            android:text="@string/action_register"
+            android:textAllCaps="false"
+            android:textColor="#BBDEFB"
+            android:textSize="16sp"
+            tools:ignore="VisualLintButtonSize" />
+
+        <TextView
+            android:id="@+id/txtWelcomeSso"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/welcome_sso"
+            android:textColor="#2E7D32"
+            android:textSize="13sp" />
+    </LinearLayout>
+</ScrollView>
