@@ -78,6 +78,15 @@
     <string name="order_line_one_format">%1s | %2s</string>
     <string name="order_line_two_format">$%.2f | %2s</string>
 
+    <string name="details_rating_format">Rating %.1f</string>
+    <string name="details_select_item">Select at least one item</string>
 
+    <string name="details_not_found">Restaurant not found</string>
+
+    <string name="checkout_line_format">%1$s x %2$d</string>
+    <string name="checkout_error_address">Enter a delivery address</string>
+    <string name="checkout_error_card_name">Enter the name on the card</string>
+    <string name="checkout_error_card_number">Enter a 16-digit card number</string>
+    <string name="checkout_order_placed">Order placed</string>
 
 </resources>
