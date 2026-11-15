@@ -66,4 +66,18 @@
     <!-- Price format -->
     <string name="price_format">$%.2f</string>
 
+    <!-- Order List - Manager (#19) -->
+    <string name="order_list_title">Order List</string>
+    <string name="order_list_search">Search by Order ID</string>
+    <string name="order_filter_all">All</string>
+    <string name="order_filter_pending">Pending</string>
+    <string name="order_filter_accepted">Accepted</string>
+    <string name="order_filter_ready">Ready</string>
+
+    <string name="order_line_name_format">Order #%1d</string>
+    <string name="order_line_one_format">%1s | %2s</string>
+    <string name="order_line_two_format">$%.2f | %2s</string>
+
+
+
 </resources>

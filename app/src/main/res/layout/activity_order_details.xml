@@ -7,4 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".OrderDetails">
 
+    <TextView
+        android:id="@+id/orderDetailsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="307dp"
+        android:layout_marginEnd="153dp"
+        android:text="@string/order_details_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
