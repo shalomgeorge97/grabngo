@@ -1,6 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GrabNGo</string>
+
+    <!-- Shared labels -->
+    <string name="label_name">Name</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
+    <string name="label_address">Address</string>
+    <string name="hint_full_name">Full name</string>
+    <string name="hint_email">name@email.com</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_address">Street, city</string>
+    <string name="action_login">Login</string>
+    <string name="action_register">Register</string>
+
+    <!-- Welcome screen -->
+    <string name="welcome_title">GrabNGo</string>
+    <string name="welcome_tagline">Save food, save money.</string>
+    <string name="welcome_sso">Continue with SSO</string>
+
+    <!-- Registration screen -->
+    <string name="register_title">Create an account</string>
+    <string name="register_role_prompt">I am a</string>
+    <string name="role_customer">Customer</string>
+    <string name="role_manager">Restaurant Manager</string>
+    <string name="register_upload_photo">Upload photo (optional)</string>
+    <string name="register_login_link">Already have an account? Login</string>
+
+    <!-- Login screen -->
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Log in to your GrabNGo account</string>
+    <string name="login_forgot_password">Forgot password?</string>
+    <string name="login_register_link">New user? Register</string>
+
+    <!-- Profile screen -->
+    <string name="profile_title">My Profile</string>
+    <string name="profile_photo_optional">Profile photo (optional)</string>
+    <string name="profile_save_changes">Save changes</string>
+    <string name="profile_logout">Logout</string>
+
+    <!-- Accessibility descriptions -->
+    <string name="cd_grabngo_logo">GrabNGo logo</string>
+    <string name="cd_profile_photo_placeholder">Profile photo placeholder</string>
+
+    <!-- UI-only demo messages; real functionality will be added later. -->
+    <string name="message_sso_later">Single sign-on will be connected during the authentication phase.</string>
+    <string name="message_password_recovery_later">Password recovery will be added during the authentication phase.</string>
+    <string name="message_photo_upload_later">Photo upload will be added during the profile functionality phase.</string>
+    <string name="message_registration_later">Registration will be connected to the database during the functionality phase.</string>
+    <string name="message_profile_save_later">Profile changes will be saved when database functionality is added.</string>
     <!-- Common -->
     <string name="action_back">Back</string>
     <string name="action_confirm">Confirm</string>
