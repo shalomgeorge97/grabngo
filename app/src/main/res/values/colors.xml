@@ -25,4 +25,15 @@
     <color name="status_ready_bg">#E0F2F1</color>
     <color name="status_done_bg">#E8F5E9</color>
     <color name="status_rejected_bg">#FDECEA</color>
+
+    <color name="grabngo_navy">#354B69</color>
+    <color name="grabngo_navy_dark">#293D59</color>
+    <color name="grabngo_mint">#EAF4EB</color>
+    <color name="grabngo_green">#7EAA89</color>
+    <color name="grabngo_green_dark">#5E8C6C</color>
+    <color name="grabngo_border">#D5DDD8</color>
+    <color name="grabngo_text">#26332D</color>
+    <color name="grabngo_muted">#7A8580</color>
+    <color name="grabngo_red">#B66D73</color>
+    <color name="white">#FFFFFF</color>
 </resources>
