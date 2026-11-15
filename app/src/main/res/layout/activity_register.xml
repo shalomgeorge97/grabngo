@@ -1,10 +1,220 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true"
+    android:clipToPadding="false"
     tools:context=".Register">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="22dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="28dp">
+
+        <ImageView
+            android:id="@+id/imgRegisterLogo"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/cd_grabngo_logo"
+            android:src="@drawable/ic_grabngo_logo" />
+
+        <TextView
+            android:id="@+id/txtRegisterTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/register_title"
+            android:textColor="@color/grabngo_text"
+            android:textSize="23sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtRegisterRolePrompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:text="@string/register_role_prompt"
+            android:textColor="@color/grabngo_text"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnRegisterCustomer"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bg_role_selected"
+                android:backgroundTint="@null"
+                android:stateListAnimator="@null"
+                android:text="@string/role_customer"
+                android:textAllCaps="false"
+                android:textColor="#69F0AE"
+                android:textSize="14sp"
+                tools:ignore="VisualLintButtonSize" />
+
+            <Button
+                android:id="@+id/btnRegisterManager"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_role_unselected"
+                android:backgroundTint="@null"
+                android:stateListAnimator="@null"
+                android:text="@string/role_manager"
+                android:textAllCaps="false"
+                android:textColor="#C5E1A5"
+                android:textSize="13sp"
+                tools:ignore="VisualLintButtonSize" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtRegisterNameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="17dp"
+            android:labelFor="@id/edtRegisterName"
+            android:text="@string/label_name"
+            android:textColor="@color/grabngo_text"
+            android:textSize="13sp" />
+        <EditText
+            android:id="@+id/edtRegisterName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_input"
+            android:autofillHints="name"
+            android:imeOptions="actionNext"
+            android:inputType="textPersonName|textCapWords"
+            android:maxLines="1"
+            android:textColor="@color/grabngo_text"
+            android:textSize="14sp"
+            tools:ignore="VisualLintTextFieldSize" />
+
+        <TextView
+            android:id="@+id/txtRegisterEmailLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:labelFor="@id/edtRegisterEmail"
+            android:text="@string/label_email"
+            android:textColor="@color/grabngo_text"
+            android:textSize="13sp" />
+        <EditText
+            android:id="@+id/edtRegisterEmail"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_input"
+            android:autofillHints="emailAddress"
+            android:imeOptions="actionNext"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:textColor="@color/grabngo_text"
+            android:textSize="14sp"
+            tools:ignore="VisualLintTextFieldSize" />
+
+        <TextView
+            android:id="@+id/txtRegisterPasswordLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:labelFor="@id/edtRegisterPassword"
+            android:text="@string/label_password"
+            android:textColor="@color/grabngo_text"
+            android:textSize="13sp" />
+        <EditText
+            android:id="@+id/edtRegisterPassword"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_input"
+            android:autofillHints="newPassword"
+            android:imeOptions="actionNext"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textColor="@color/grabngo_text"
+            android:textSize="14sp"
+            tools:ignore="VisualLintTextFieldSize" />
+
+        <TextView
+            android:id="@+id/txtRegisterAddressLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:labelFor="@id/edtRegisterAddress"
+            android:text="@string/label_address"
+            android:textColor="@color/grabngo_text"
+            android:textSize="13sp" />
+        <EditText
+            android:id="@+id/edtRegisterAddress"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_input"
+            android:autofillHints="postalAddress"
+            android:imeOptions="actionDone"
+            android:inputType="textPostalAddress|textCapSentences"
+            android:maxLines="1"
+            android:textColor="@color/grabngo_text"
+            android:textSize="14sp"
+            tools:ignore="VisualLintTextFieldSize" />
+
+        <Button
+            android:id="@+id/btnRegisterUploadPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_button_outline"
+            android:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            android:text="@string/register_upload_photo"
+            android:textAllCaps="false"
+            android:textColor="#BBDEFB"
+            android:textSize="14sp"
+            tools:ignore="VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/btnRegister"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_button_primary"
+            android:backgroundTint="@null"
+            android:text="@string/action_register"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:stateListAnimator="@null"
+            tools:ignore="VisualLintButtonSize" />
+
+        <TextView
+            android:id="@+id/txtRegisterLoginLink"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="9dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/register_login_link"
+            android:textColor="#2E7D32"
+            android:textSize="13sp" />
+    </LinearLayout>
+</ScrollView>
