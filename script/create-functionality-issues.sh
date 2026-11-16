@@ -15,7 +15,7 @@ JENU="jenumoljoseph"
 GABRIEL="gabriel-ordoyo"
 # ----------------------------------------------------------------------------
 
-MILESTONE="Final project - Nov 26"
+MILESTONE="GrabNGo Functionality"
 LIST="$(mktemp)"
 
 gh auth status >/dev/null
