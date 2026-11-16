@@ -9,10 +9,10 @@
 set -e
 
 # ---- EDIT THESE: GitHub usernames, no "@" (same as in setup-github.sh) ----
-SHALOM="your-github-username"
-AMI="ami-username"
-JENU="jenu-username"
-GABRIEL="gabriel-username"
+SHALOM="shalomgeorge97@gmail.com"
+AMI="ami0610-hub"
+JENU="jenumoljoseph"
+GABRIEL="gabriel-ordoyo"
 # ----------------------------------------------------------------------------
 
 MILESTONE="Final project - Nov 26"
