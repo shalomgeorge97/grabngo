@@ -28,6 +28,12 @@ public interface UserDao {
     @Query("SELECT EXISTS(SELECT 1 FROM USER WHERE email = :email)")
     boolean isEmailExists(String email);
 
+    @Query("SELECT EXISTS(" +
+            "SELECT 1 FROM USER " +
+            "WHERE email = :email " +
+            "AND user_id != :userId)")
+    boolean isEmailUsedByAnotherUser(String email, int userId);
+
     // Update an existing user for profile edit
     @Update
     void update(User user);

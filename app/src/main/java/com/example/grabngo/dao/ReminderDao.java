@@ -22,4 +22,14 @@ public interface ReminderDao {
     // Mark a reminder as sent
     @Query("UPDATE REMINDER SET is_sent = 1 WHERE reminder_id = :reminderId")
     void markReminderAsSent(int reminderId);
+
+    // Get unsent reminders
+    @Query("SELECT * FROM REMINDER WHERE is_sent = 0")
+    List<Reminder> getUnsentReminders();
+
+    //Get Due Reminders
+    @Query("SELECT * FROM REMINDER " +
+            "WHERE is_sent = 0 " +
+            "AND reminder_datetime <= :currentDateTime")
+    List<Reminder> getDueReminders(String currentDateTime);
 }
