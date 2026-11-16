@@ -5,6 +5,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.example.grabngo.entity.CustomerOrder;
 import com.example.grabngo.entity.Order;
 
 import java.util.List;
@@ -38,4 +39,34 @@ public interface OrderDao {
 
     @Query("UPDATE `ORDERS` SET status = :status WHERE order_id = :orderId")
     int updateOrderStatus(int orderId, String status);
+
+    // Get customer and order information for the manager's order list and order details.
+    @Query("SELECT O.order_id AS orderId, " +
+            "O.customer_id AS customerId, " +
+            "U.name AS customerName, " +
+            "O.order_date AS orderDate, " +
+            "O.fulfillment_type AS fulfillmentType, " +
+            "O.status AS status, " +
+            "O.total_amount AS totalAmount, " +
+            "O.delivery_address AS deliveryAddress " +
+            "FROM ORDERS AS O " +
+            "INNER JOIN USER AS U ON O.customer_id = U.user_id " +
+            "WHERE O.restaurant_id = :restaurantId " +
+            "ORDER BY O.order_id DESC")
+    List<CustomerOrder> getCustomerOrdersByRestaurantId(int restaurantId);
+
+    // Get customer and order information for a specific order
+    @Query("SELECT O.order_id AS orderId, " +
+            "O.customer_id AS customerId, " +
+            "U.name AS customerName, " +
+            "O.order_date AS orderDate, " +
+            "O.fulfillment_type AS fulfillmentType, " +
+            "O.status AS status, " +
+            "O.total_amount AS totalAmount, " +
+            "O.delivery_address AS deliveryAddress " +
+            "FROM ORDERS AS O " +
+            "INNER JOIN USER AS U ON O.customer_id = U.user_id " +
+            "WHERE O.order_id = :orderId "+
+            "AND O.restaurant_id = :restaurantId")
+    CustomerOrder getCustomerOrderById(int orderId, int restaurantId);
 }

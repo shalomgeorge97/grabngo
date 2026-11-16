@@ -82,155 +82,175 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public void insertSeedData() {
 
-        if (userDao().isEmailExists("manager@grabngo.com")) {
-            return;
-        }
-
-        // 1. Create Manager account
-        User manager = new User(
-                "Test Manager",
-                "manager@grabngo.com",
-                "manager123",
-                "Vancouver, BC",
-                "MANAGER",
-                null
-        );
-
-        long managerId = userDao().addUser(manager);
+        runInTransaction(() -> {
 
 
-        // 2. Create Customer account
-        User customer = new User(
-                "Test Customer",
-                "customer@grabngo.com",
-                "customer123",
-                "Vancouver, BC",
-                "CUSTOMER",
-                null
-        );
-
-        userDao().addUser(customer);
+            // Check if seed data already exists
+            if (userDao().isEmailExists("manager1@grabngo.com")
+                    && userDao().isEmailExists("manager2@grabngo.com")
+                    && userDao().isEmailExists("manager3@grabngo.com")
+                    && userDao().isEmailExists("customer@grabngo.com")) {
+                return;
+            }
 
 
-        // 3. Create Restaurants
-
-        Restaurant restaurant1 = new Restaurant(
-                (int) managerId,
-                "Vancouver Sushi",
-                "100 Robson Street",
-                "Vancouver",
-                "604-111-1111",
-                "09:00-20:00",
-                4.5,
-                null
-        );
-
-        long restaurantId1 = restaurantDao().addRestaurant(restaurant1);
+            User manager1 = new User(
+                    "Test Manager 1",
+                    "manager1@grabngo.com",
+                    "manager123",
+                    "Vancouver, BC",
+                    "MANAGER",
+                    null
+            );
+            long managerId1 = userDao().addUser(manager1);
 
 
-        Restaurant restaurant2 = new Restaurant(
-                (int) managerId,
-                "Fresh Bowl Cafe",
-                "200 Granville Street",
-                "Vancouver",
-                "604-222-2222",
-                "08:00-18:00",
-                4.3,
-                null
-        );
-
-        long restaurantId2 = restaurantDao().addRestaurant(restaurant2);
+            User manager2 = new User(
+                    "Test Manager 2",
+                    "manager2@grabngo.com",
+                    "manager123",
+                    "Vancouver, BC",
+                    "MANAGER",
+                    null
+            );
+            long managerId2 = userDao().addUser(manager2);
 
 
-        Restaurant restaurant3 = new Restaurant(
-                (int) managerId,
-                "Downtown Bakery",
-                "300 Main Street",
-                "Vancouver",
-                "604-333-3333",
-                "07:00-17:00",
-                4.7,
-                null
-        );
-
-        long restaurantId3 = restaurantDao().addRestaurant(restaurant3);
+            User manager3 = new User(
+                    "Test Manager 3",
+                    "manager3@grabngo.com",
+                    "manager123",
+                    "Vancouver, BC",
+                    "MANAGER",
+                    null
+            );
+            long managerId3 = userDao().addUser(manager3);
 
 
-        // 4. Create Food Items
-
-        foodItemDao().addFoodItem(new FoodItem(
-                (int) restaurantId1,
-                "Salmon Sushi Box",
-                "Fresh salmon sushi set",
-                "Japanese",
-                "Salmon, Rice",
-                15.00,
-                8.00,
-                5,
-                "2026-12-01 18:00"
-        ));
-
-        foodItemDao().addFoodItem(new FoodItem(
-                (int) restaurantId1,
-                "California Roll",
-                "California roll with avocado",
-                "Japanese",
-                "Crab, Avocado, Rice",
-                12.00,
-                6.00,
-                4,
-                "2026-12-01 18:00"
-        ));
+            User customer = new User(
+                    "Test Customer",
+                    "customer@grabngo.com",
+                    "customer123",
+                    "Vancouver, BC",
+                    "CUSTOMER",
+                    null
+            );
+            long customerId = userDao().addUser(customer);
 
 
-        foodItemDao().addFoodItem(new FoodItem(
-                (int) restaurantId2,
-                "Chicken Rice Bowl",
-                "Rice bowl with grilled chicken",
-                "Rice Bowl",
-                "Chicken, Rice, Vegetables",
-                16.00,
-                9.00,
-                3,
-                "2026-12-01 17:00"
-        ));
-
-        foodItemDao().addFoodItem(new FoodItem(
-                (int) restaurantId2,
-                "Vegetable Salad",
-                "Fresh mixed vegetable salad",
-                "Salad",
-                "Lettuce, Tomato, Cucumber",
-                12.00,
-                7.00,
-                5,
-                "2026-12-01 17:00"
-        ));
+            Restaurant restaurant1 = new Restaurant(
+                    (int) managerId1,
+                    "Vancouver Sushi",
+                    "100 Robson Street",
+                    "Vancouver",
+                    "604-111-1111",
+                    "09:00-20:00",
+                    4.5,
+                    null
+            );
+            long restaurantId1 = restaurantDao().addRestaurant(restaurant1);
 
 
-        foodItemDao().addFoodItem(new FoodItem(
-                (int) restaurantId3,
-                "Croissant Set",
-                "Freshly baked croissants",
-                "Bakery",
-                "Wheat, Butter, Milk",
-                10.00,
-                5.00,
-                6,
-                "2026-12-01 16:00"
-        ));
+            Restaurant restaurant2 = new Restaurant(
+                    (int) managerId2,
+                    "Fresh Bowl Cafe",
+                    "200 Granville Street",
+                    "Vancouver",
+                    "604-222-2222",
+                    "08:00-18:00",
+                    4.3,
+                    null
+            );
+            long restaurantId2 = restaurantDao().addRestaurant(restaurant2);
 
-        foodItemDao().addFoodItem(new FoodItem(
-                (int) restaurantId3,
-                "Muffins (2 pcs)",
-                "Two freshly baked muffins",
-                "Bakery",
-                "Wheat, Eggs, Milk",
-                8.00,
-                4.00,
-                4,
-                "2026-12-01 16:00"
-        ));
+
+            Restaurant restaurant3 = new Restaurant(
+                    (int) managerId3,
+                    "Downtown Bakery",
+                    "300 Main Street",
+                    "Vancouver",
+                    "604-333-3333",
+                    "07:00-17:00",
+                    4.7,
+                    null
+            );
+            long restaurantId3 = restaurantDao().addRestaurant(restaurant3);
+
+
+            foodItemDao().addFoodItem(new FoodItem(
+                    (int) restaurantId1,
+                    "Salmon Sushi Box",
+                    "Fresh salmon sushi set",
+                    "Japanese",
+                    "Salmon, Rice",
+                    15.00,
+                    8.00,
+                    5,
+                    "2026-12-01 18:00"
+            ));
+
+            foodItemDao().addFoodItem(new FoodItem(
+                    (int) restaurantId1,
+                    "California Roll",
+                    "California roll with avocado",
+                    "Japanese",
+                    "Crab, Avocado, Rice",
+                    12.00,
+                    6.00,
+                    4,
+                    "2026-12-01 18:00"
+            ));
+
+
+            foodItemDao().addFoodItem(new FoodItem(
+                    (int) restaurantId2,
+                    "Chicken Rice Bowl",
+                    "Rice bowl with grilled chicken",
+                    "Rice Bowl",
+                    "Chicken, Rice, Vegetables",
+                    16.00,
+                    9.00,
+                    3,
+                    "2026-12-01 17:00"
+            ));
+
+            foodItemDao().addFoodItem(new FoodItem(
+                    (int) restaurantId2,
+                    "Vegetable Salad",
+                    "Fresh mixed vegetable salad",
+                    "Salad",
+                    "Lettuce, Tomato, Cucumber",
+                    12.00,
+                    7.00,
+                    5,
+                    "2026-12-01 17:00"
+            ));
+
+
+            foodItemDao().addFoodItem(new FoodItem(
+                    (int) restaurantId3,
+                    "Croissant Set",
+                    "Freshly baked croissants",
+                    "Bakery",
+                    "Wheat, Butter, Milk",
+                    10.00,
+                    5.00,
+                    6,
+                    "2026-12-01 16:00"
+            ));
+
+            foodItemDao().addFoodItem(new FoodItem(
+                    (int) restaurantId3,
+                    "Muffins (2 pcs)",
+                    "Two freshly baked muffins",
+                    "Bakery",
+                    "Wheat, Eggs, Milk",
+                    8.00,
+                    4.00,
+                    4,
+                    "2026-12-01 16:00"
+            ));
+        });
     }
 
 }
