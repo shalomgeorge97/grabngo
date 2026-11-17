@@ -186,7 +186,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     15.00,
                     8.00,
                     5,
-                    "2026-12-01 18:00"
+                    "2026-12-10 18:00"
             ));
 
             foodItemDao().addFoodItem(new FoodItem(
@@ -198,7 +198,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     12.00,
                     6.00,
                     4,
-                    "2026-12-01 18:00"
+                    "2026-12-10 18:00"
             ));
 
 
@@ -211,7 +211,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     16.00,
                     9.00,
                     3,
-                    "2026-12-01 17:00"
+                    "2026-12-10 17:00"
             ));
 
             foodItemDao().addFoodItem(new FoodItem(
@@ -223,7 +223,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     12.00,
                     7.00,
                     5,
-                    "2026-12-01 17:00"
+                    "2026-12-10 17:00"
             ));
 
 
@@ -236,7 +236,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     10.00,
                     5.00,
                     6,
-                    "2026-12-01 16:00"
+                    "2026-12-10 16:00"
             ));
 
             foodItemDao().addFoodItem(new FoodItem(
@@ -248,7 +248,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     8.00,
                     4.00,
                     4,
-                    "2026-12-01 16:00"
+                    "2026-12-10 16:00"
             ));
         });
     }

@@ -25,6 +25,20 @@ public interface OrderDao {
     @Query("SELECT * FROM ORDERS WHERE customer_id = :customerId ORDER BY order_id DESC")
     List<Order> getOrdersByCustomerId(int customerId);
 
+    //Get active orders
+    @Query("SELECT * FROM ORDERS " +
+            "WHERE customer_id = :customerId " +
+            "AND status IN ('PENDING', 'ACCEPTED', 'READY') " +
+            "ORDER BY order_id DESC")
+    List<Order> getActiveOrdersByCustomerId(int customerId);
+
+    //Get past orders
+    @Query("SELECT * FROM ORDERS " +
+            "WHERE customer_id = :customerId " +
+            "AND status IN ('PICKED_UP', 'DELIVERED', 'REJECTED', 'CANCELLED') " +
+            "ORDER BY order_id DESC")
+    List<Order> getPastOrdersByCustomerId(int customerId);
+
     // Get all orders received by a specific restaurant
     @Query("SELECT * FROM ORDERS WHERE restaurant_id = :restaurantId ORDER BY order_id DESC")
     List<Order> getOrdersByRestaurantId(int restaurantId);

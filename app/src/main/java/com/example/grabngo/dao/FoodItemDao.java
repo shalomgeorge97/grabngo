@@ -43,4 +43,21 @@ public interface FoodItemDao {
 
     @Query("UPDATE FOOD_ITEM SET available_quantity = available_quantity + :quantity WHERE food_id = :foodId AND :quantity > 0")
     int increaseAvailableQuantity(int foodId, int quantity);
+
+    @Query("SELECT * FROM FOOD_ITEM " +
+            "WHERE restaurant_id = :restaurantId " +
+            "AND available_quantity > 0 " +
+            "AND available_datetime >= :currentDateTime " +
+            "AND (:keyword IS NULL OR name LIKE '%' || :keyword || '%') " +
+            "AND (:category IS NULL OR category = :category) " +
+            "AND (:minPrice IS NULL OR discounted_price >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR discounted_price <= :maxPrice)")
+    List<FoodItem> getAvailableFoodItems(
+            int restaurantId,
+            String currentDateTime,
+            String keyword,
+            String category,
+            Double minPrice,
+            Double maxPrice
+    );
 }
