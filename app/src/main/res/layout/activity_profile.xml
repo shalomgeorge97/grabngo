@@ -1,148 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/white"
-    android:fillViewport="true"
     tools:context=".Profile">
 
-    <LinearLayout
+    <!-- Scrollable Profile Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingTop="28dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="30dp">
+
+            <TextView
+                android:id="@+id/txtProfileTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/profile_title"
+                android:textColor="@color/grabngo_text"
+                android:textSize="23sp"
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_avatar"
+                android:padding="19dp">
+
+                <ImageView
+                    android:id="@+id/imgProfilePhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/cd_profile_photo_placeholder"
+                    android:src="@drawable/ic_profile_person" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/txtProfilePhotoHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:text="@string/profile_photo_optional"
+                android:textColor="#757575"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/txtProfileNameLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                android:labelFor="@id/edtProfileName"
+                android:text="@string/label_name"
+                android:textColor="@color/grabngo_text"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/edtProfileName"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:autofillHints="name"
+                android:inputType="textPersonName|textCapWords"
+                android:maxLines="1"
+                android:textColor="@color/grabngo_text"
+                android:textSize="14sp"
+                tools:ignore="VisualLintTextFieldSize" />
+
+            <TextView
+                android:id="@+id/txtProfileEmailLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:labelFor="@id/edtProfileEmail"
+                android:text="@string/label_email"
+                android:textColor="@color/grabngo_text"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/edtProfileEmail"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:autofillHints="emailAddress"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:textColor="@color/grabngo_text"
+                android:textSize="14sp"
+                tools:ignore="VisualLintTextFieldSize" />
+
+            <TextView
+                android:id="@+id/txtProfileAddressLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:labelFor="@id/edtProfileAddress"
+                android:text="@string/label_address"
+                android:textColor="@color/grabngo_text"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/edtProfileAddress"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bg_input"
+                android:autofillHints="postalAddress"
+                android:inputType="textPostalAddress|textCapSentences"
+                android:maxLines="1"
+                android:textColor="@color/grabngo_text"
+                android:textSize="14sp"
+                tools:ignore="VisualLintTextFieldSize" />
+
+            <Button
+                android:id="@+id/btnProfileSave"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="36dp"
+                android:background="@color/primary"
+                android:backgroundTint="@null"
+                android:stateListAnimator="@null"
+                android:text="@string/profile_save_changes"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                tools:ignore="VisualLintButtonSize" />
+
+            <Button
+                android:id="@+id/btnProfileLogout"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="12dp"
+                android:background="@color/primary"
+                android:backgroundTint="@null"
+                android:stateListAnimator="@null"
+                android:text="@string/profile_logout"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                tools:ignore="VisualLintButtonSize" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Role-Based Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="24dp"
-        android:paddingTop="28dp"
-        android:paddingEnd="24dp"
-        android:paddingBottom="30dp">
+        android:background="@color/white"
+        android:elevation="8dp"
+        app:labelVisibilityMode="labeled" />
 
-        <TextView
-            android:id="@+id/txtProfileTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/profile_title"
-            android:textColor="@color/grabngo_text"
-            android:textSize="23sp"
-            android:textStyle="bold" />
-
-        <FrameLayout
-            android:layout_width="88dp"
-            android:layout_height="88dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/bg_avatar"
-            android:padding="19dp">
-            <ImageView
-                android:id="@+id/imgProfilePhoto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/cd_profile_photo_placeholder"
-                android:src="@drawable/ic_profile_person" />
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/txtProfilePhotoHint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:text="@string/profile_photo_optional"
-            android:textColor="#757575"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/txtProfileNameLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="27dp"
-            android:labelFor="@id/edtProfileName"
-            android:text="@string/label_name"
-            android:textColor="@color/grabngo_text"
-            android:textSize="13sp" />
-        <EditText
-            android:id="@+id/edtProfileName"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="7dp"
-            android:background="@drawable/bg_input"
-            android:autofillHints="name"
-            android:inputType="textPersonName|textCapWords"
-            android:maxLines="1"
-            android:textColor="@color/grabngo_text"
-            android:textSize="14sp"
-            tools:ignore="VisualLintTextFieldSize" />
-
-        <TextView
-            android:id="@+id/txtProfileEmailLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:labelFor="@id/edtProfileEmail"
-            android:text="@string/label_email"
-            android:textColor="@color/grabngo_text"
-            android:textSize="13sp" />
-        <EditText
-            android:id="@+id/edtProfileEmail"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="7dp"
-            android:background="@drawable/bg_input"
-            android:autofillHints="emailAddress"
-            android:inputType="textEmailAddress"
-            android:maxLines="1"
-            android:textColor="@color/grabngo_text"
-            android:textSize="14sp"
-            tools:ignore="VisualLintTextFieldSize" />
-
-        <TextView
-            android:id="@+id/txtProfileAddressLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:labelFor="@id/edtProfileAddress"
-            android:text="@string/label_address"
-            android:textColor="@color/grabngo_text"
-            android:textSize="13sp" />
-        <EditText
-            android:id="@+id/edtProfileAddress"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="7dp"
-            android:background="@drawable/bg_input"
-            android:autofillHints="postalAddress"
-            android:inputType="textPostalAddress|textCapSentences"
-            android:maxLines="1"
-            android:textColor="@color/grabngo_text"
-            android:textSize="14sp"
-            tools:ignore="VisualLintTextFieldSize" />
-
-        <Button
-            android:id="@+id/btnProfileSave"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginTop="36dp"
-            android:background="@drawable/bg_button_primary"
-            android:backgroundTint="@null"
-            android:text="@string/profile_save_changes"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:stateListAnimator="@null"
-            tools:ignore="VisualLintButtonSize" />
-
-        <Button
-            android:id="@+id/btnProfileLogout"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_button_danger_outline"
-            android:backgroundTint="@null"
-            android:stateListAnimator="@null"
-            android:text="@string/profile_logout"
-            android:textAllCaps="false"
-            android:textColor="#FFCDD2"
-            android:textSize="15sp"
-            tools:ignore="VisualLintButtonSize" />
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>

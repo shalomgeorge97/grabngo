@@ -141,4 +141,32 @@
     <string name="history_line_one_format">Order #%1$d  |  %2$s</string>
     <string name="history_line_two_format">$%1$.2f  |  %2$s</string>
 
+
+    <!-- Profile error messages -->
+    <string name="error_profile_load">Unable to load your profile. Please try again.</string>
+    <string name="error_profile_user_missing">Your account could not be found. Please log in again.</string>
+    <string name="error_profile_not_loaded">Your profile is not loaded yet. Please try again.</string>
+
+    <!-- Profile validation messages -->
+    <string name="error_name_required">Please enter your name.</string>
+    <string name="error_email_required">Please enter your email address.</string>
+    <string name="error_address_required">Please enter your address.</string>
+
+    <!-- Profile save messages -->
+    <string name="error_profile_save">Unable to save your profile. Please try again.</string>
+    <string name="error_email_in_use">This email address is already registered.</string>
+    <string name="message_profile_saved">Your profile has been updated successfully.</string>
+
+    <!-- Logout confirmation -->
+    <string name="message_logout_confirmation">Are you sure you want to log out?</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_food">Food</string>
+
+
+    <string name="food_list_title">Food Management</string>
+    <string name="food_list_heading">Manage Your Food</string>
+    <string name="food_list_placeholder">Your food listings will appear here. You can manage available food items from this section.</string>
+    <string name="cd_food_icon">Food management icon</string>
+
 </resources>

@@ -1,44 +1,94 @@
 package com.example.grabngo;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.grabngo.database.AppDatabase;
+import com.example.grabngo.util.SessionManager;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "GrabNGoSession";
+
+    private final ExecutorService startupExecutor =
+            Executors.newSingleThreadExecutor();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
 
-        AppDatabase db = AppDatabase.getDatabase(this);
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
+        SessionManager sessionManager =
+                new SessionManager(getApplicationContext());
 
-        executor.execute(() -> {
+        Log.d(TAG, "App started.");
+        Log.d(TAG, "User ID: " + sessionManager.getUserId());
+        Log.d(TAG, "User Role: " + sessionManager.getUserRole());
+        Log.d(TAG, "Active Session: "
+                + sessionManager.hasActiveSession());
 
-            // Insert seed data
-            db.insertSeedData();
+        startupExecutor.execute(() -> {
 
-            // Continue after insertion is completed
+            // Prepare the database and seed accounts.
+            try {
+                AppDatabase database =
+                        AppDatabase.getDatabase(getApplicationContext());
+
+                database.insertSeedData();
+
+            } catch (Exception exception) {
+                Log.e(TAG, "Database initialization failed", exception);
+            }
+
+            // Read saved session.
+            boolean isLoggedIn =
+                    sessionManager.hasActiveSession();
+
+            String role = sessionManager.getUserRole();
+
+            Class<?> destination;
+
+            if (isLoggedIn) {
+
+                if (SessionManager.ROLE_MANAGER.equals(role)) {
+                    destination = FoodList.class;
+                } else {
+                    destination = Home.class;
+                }
+
+                Log.d(TAG, "Restoring session for: " + role);
+
+            } else {
+
+                destination = Welcome.class;
+
+                Log.d(TAG, "No active session. Opening Welcome.");
+            }
+
             runOnUiThread(() -> {
-                setContentView(R.layout.activity_main);
-                ViewCompat.setOnApplyWindowInsetsListener(
-                        findViewById(R.id.main), (v, insets) -> {
-                            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-                            return insets;
-                        });
+
+                Intent intent = new Intent(
+                        MainActivity.this, destination);
+
+                intent.addFlags(
+                        Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                startActivity(intent);
+                finish();
             });
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        startupExecutor.shutdown();
     }
 }
