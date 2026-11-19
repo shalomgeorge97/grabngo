@@ -35,16 +35,17 @@ public class MainActivity extends AppCompatActivity {
 
         startupExecutor.execute(() -> {
 
-            // Prepare the database and seed accounts.
-            try {
-                AppDatabase database =
-                        AppDatabase.getDatabase(getApplicationContext());
-
-                database.insertSeedData();
-
-            } catch (Exception exception) {
-                Log.e(TAG, "Database initialization failed", exception);
-            }
+            //moved the code below to splash activity.
+//            // Prepare the database and seed accounts.
+//            try {
+//                AppDatabase database =
+//                        AppDatabase.getDatabase(getApplicationContext());
+//
+//                database.insertSeedData();
+//
+//            } catch (Exception exception) {
+//                Log.e(TAG, "Database initialization failed", exception);
+//            }
 
             // Read saved session.
             boolean isLoggedIn =
