@@ -63,7 +63,7 @@
                 android:stateListAnimator="@null"
                 android:text="@string/role_customer"
                 android:textAllCaps="false"
-                android:textColor="#69F0AE"
+                android:textColor="@color/primary"
                 android:textSize="14sp"
                 tools:ignore="VisualLintButtonSize" />
 
@@ -79,7 +79,7 @@
                 android:stateListAnimator="@null"
                 android:text="@string/role_manager"
                 android:textAllCaps="false"
-                android:textColor="#C5E1A5"
+                android:textColor="@color/primary"
                 android:textSize="13sp"
                 tools:ignore="VisualLintButtonSize" />
         </LinearLayout>
@@ -181,28 +181,28 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="14dp"
-            android:background="@drawable/bg_button_outline"
+            android:background="@color/primary_dark"
             android:backgroundTint="@null"
             android:stateListAnimator="@null"
             android:text="@string/register_upload_photo"
             android:textAllCaps="false"
-            android:textColor="#BBDEFB"
+            android:textColor="@color/white"
             android:textSize="14sp"
-            tools:ignore="VisualLintButtonSize" />
+            tools:ignore="VisualLintButtonSize,TextContrastCheck" />
 
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginTop="14dp"
-            android:background="@drawable/bg_button_primary"
+            android:background="@color/primary_dark"
             android:backgroundTint="@null"
+            android:stateListAnimator="@null"
             android:text="@string/action_register"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="15sp"
-            android:stateListAnimator="@null"
-            tools:ignore="VisualLintButtonSize" />
+            tools:ignore="VisualLintButtonSize,TextContrastCheck" />
 
         <TextView
             android:id="@+id/txtRegisterLoginLink"

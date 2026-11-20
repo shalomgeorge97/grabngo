@@ -60,13 +60,13 @@
             android:id="@+id/btnWelcomeLogin"
             android:layout_width="match_parent"
             android:layout_height="54dp"
-            android:background="@drawable/bg_button_primary"
+            android:background="@color/primary_dark"
             android:backgroundTint="@null"
+            android:stateListAnimator="@null"
             android:text="@string/action_login"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:stateListAnimator="@null"
             tools:ignore="VisualLintButtonSize" />
 
         <Button
@@ -74,12 +74,12 @@
             android:layout_width="match_parent"
             android:layout_height="54dp"
             android:layout_marginTop="14dp"
-            android:background="@drawable/bg_button_outline"
+            android:background="@color/primary_dark"
             android:backgroundTint="@null"
             android:stateListAnimator="@null"
             android:text="@string/action_register"
             android:textAllCaps="false"
-            android:textColor="#BBDEFB"
+            android:textColor="@android:color/white"
             android:textSize="16sp"
             tools:ignore="VisualLintButtonSize" />
 
