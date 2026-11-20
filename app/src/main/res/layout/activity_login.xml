@@ -110,13 +110,13 @@
             android:layout_width="match_parent"
             android:layout_height="54dp"
             android:layout_marginTop="12dp"
-            android:background="@drawable/bg_button_primary"
+            android:background="@color/primary_dark"
             android:backgroundTint="@null"
+            android:stateListAnimator="@null"
             android:text="@string/action_login"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:stateListAnimator="@null"
             tools:ignore="VisualLintButtonSize" />
 
         <View
