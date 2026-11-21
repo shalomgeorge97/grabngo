@@ -1,6 +1,7 @@
 package com.example.grabngo.database;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import androidx.room.Database;
 import androidx.room.Room;
@@ -34,8 +35,7 @@ import com.example.grabngo.entity.User;
 )
 public abstract class AppDatabase extends RoomDatabase {
 
-    // Store the Room database instance so the same instance can be reused across the app.
-    private static volatile AppDatabase appDatabase;
+    private static AppDatabase appDatabase;
 
     // DAO accessors
     public abstract UserDao userDao();
@@ -53,45 +53,33 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract OrderTransactionDao orderTransactionDao();
 
 
-    //Get database instance
-    //Use Singleton to reuse one database instance across the app,
-    //reducing resource usage and simplifying database management.
+
     public static AppDatabase getDatabase(Context context) {
 
-        //Check whether a database instance has already been created.
         if (appDatabase == null) {
-            // Allow only one thread at a time to create the database instance.
-            synchronized (AppDatabase.class) {
 
-                //Check again in case another thread created the instance
-                //while this thread was waiting to enter the synchronized block.
-                if (appDatabase == null) {
-
-                    //Create a Room database instance and store it in appDatabase.
-                    appDatabase = Room.databaseBuilder(
-                            context.getApplicationContext(),
-                            AppDatabase.class,
-                            "grabngo_database"
-                    ).build();
-                }
-            }
+            appDatabase = Room.databaseBuilder(
+                    context.getApplicationContext(),
+                    AppDatabase.class,
+                    "grabngo_database"
+            ).allowMainThreadQueries().build();
         }
 
         return appDatabase;
     }
 
-    public void insertSeedData() {
+    public void insertSeedData(Context context) {
 
-        runInTransaction(() -> {
+        SharedPreferences preferences =
+                context.getSharedPreferences("GrabNGoDatabase", Context.MODE_PRIVATE);
+
+        boolean isSeeded = preferences.getBoolean("is_seeded", false);
+
+        if (isSeeded) {
+            return;
+        }
 
 
-            // Check if seed data already exists
-            if (userDao().isEmailExists("manager1@grabngo.com")
-                    && userDao().isEmailExists("manager2@grabngo.com")
-                    && userDao().isEmailExists("manager3@grabngo.com")
-                    && userDao().isEmailExists("customer@grabngo.com")) {
-                return;
-            }
 
 
             User manager1 = new User(
@@ -135,7 +123,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     "CUSTOMER",
                     null
             );
-            long customerId = userDao().addUser(customer);
+            userDao().addUser(customer);
 
 
             Restaurant restaurant1 = new Restaurant(
@@ -250,8 +238,14 @@ public abstract class AppDatabase extends RoomDatabase {
                     4,
                     "2026-12-10 16:00"
             ));
-        });
+
+
+        preferences.edit()
+                .putBoolean("is_seeded", true)
+                .apply();
     }
+
+
 
 }
 
