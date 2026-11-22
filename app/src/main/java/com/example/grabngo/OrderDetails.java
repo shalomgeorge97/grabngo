@@ -135,6 +135,7 @@ public class OrderDetails extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (isBindingSpinner || isMutating || currentOrder == null) {
+                    isBindingSpinner = false;
                     return;
                 }
                 if (position < 0 || position >= spinnerOptions.size()) {
@@ -377,7 +378,7 @@ public class OrderDetails extends AppCompatActivity {
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spStatus.setAdapter(spinnerAdapter);
             spStatus.setSelection(0, false);
-            isBindingSpinner = false;
+            spStatus.post(() -> isBindingSpinner = false);
         }
 
         boolean canRemind = OrderStatus.ACCEPTED.equals(status) || OrderStatus.READY.equals(status);
