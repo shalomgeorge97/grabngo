@@ -4,10 +4,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.grabngo.R;
 import com.example.grabngo.model.OrderLine;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -17,10 +21,18 @@ import java.util.Locale;
  */
 public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.LineHolder> {
 
-    private final List<OrderLine> lines;
+    private final List<OrderLine> lines = new ArrayList<>();
 
     public OrderItemAdapter(List<OrderLine> lines) {
-        this.lines = lines;
+        setItems(lines);
+    }
+
+    public void setItems(List<OrderLine> newLines) {
+        lines.clear();
+        if (newLines != null) {
+            lines.addAll(newLines);
+        }
+        notifyDataSetChanged();
     }
 
     @NonNull

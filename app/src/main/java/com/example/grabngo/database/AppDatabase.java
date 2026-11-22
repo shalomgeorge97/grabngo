@@ -20,6 +20,7 @@ import com.example.grabngo.entity.OrderItem;
 import com.example.grabngo.entity.Reminder;
 import com.example.grabngo.entity.Restaurant;
 import com.example.grabngo.entity.User;
+import com.example.grabngo.util.OrderStatus;
 
 
 @Database(
@@ -239,6 +240,26 @@ public abstract class AppDatabase extends RoomDatabase {
                     "2026-12-10 16:00"
             ));
 
+
+        orderDao().addOrder(new Order(
+                4,
+                1,
+                "2026-11-22 10:06",
+                OrderStatus.FULFILLMENT_PICKUP,
+                OrderStatus.PENDING,
+                16.00,
+                null
+        ));
+
+        orderDao().addOrder(new Order(
+                4,
+                1,
+                "2026-11-22 10:06",
+                OrderStatus.FULFILLMENT_DELIVERY,
+                OrderStatus.PENDING,
+                16.00,
+                null
+        ));
 
         preferences.edit()
                 .putBoolean("is_seeded", true)

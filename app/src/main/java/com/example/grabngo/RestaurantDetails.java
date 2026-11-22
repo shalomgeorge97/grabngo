@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,40 +31,45 @@ import java.util.concurrent.Executors;
 
 public class RestaurantDetails extends AppCompatActivity {
 
+    public static final String EXTRA_RESTAURANT_ID = "restaurant_id";
+    public static final String EXTRA_FOOD_IDS = "food_ids";
+    public static final String EXTRA_QUANTITIES = "quantities";
+
+    private static final boolean USE_DUMMY_DATA = false;
+
     // Database work must run off the main thread
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private AppDatabase db;
     private FoodItemAdapter adapter;
-    private int restaurantId;
+    private RecyclerView rvFoodItems;
+    private EditText etSearchFood;
+    private Button btnReserve;
+    private TextView tvRestaurantName;
+    private TextView tvRestaurantAddress;
+    private TextView tvRestaurantInfo;
 
-    private static final boolean USE_DUMMY_DATA = true;  // testing
+    private int restaurantId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_restaurant_details);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        restaurantId = getIntent().getIntExtra("restaurant_id", -1);
-        if (restaurantId == -1) {
-            finish(); // no restaurant was passed in
+        restaurantId = getIntent().getIntExtra(EXTRA_RESTAURANT_ID, -1);
+        if (restaurantId <= 0) {
+            Toast.makeText(this, R.string.details_not_found, Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
-
-        db = AppDatabase.getDatabase(this);
 
         if (!USE_DUMMY_DATA) {
             db = AppDatabase.getDatabase(this);
         }
 
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-
+        bindViews();
+        setupInsets();
         setupFoodList();
         setupSearch();
         setupReserveButton();
@@ -70,16 +78,69 @@ public class RestaurantDetails extends AppCompatActivity {
         loadFoodItems("");
     }
 
+    private void bindViews() {
+        tvRestaurantName = findViewById(R.id.tvRestaurantName);
+        tvRestaurantAddress = findViewById(R.id.tvRestaurantAddress);
+        tvRestaurantInfo = findViewById(R.id.tvRestaurantInfo);
+        rvFoodItems = findViewById(R.id.rvFoodItems);
+        etSearchFood = findViewById(R.id.etSearchFood);
+        btnReserve = findViewById(R.id.btnReserve);
+
+        ImageView btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
+    }
+
+    private void setupInsets() {
+        View topBar = findViewById(R.id.topBar);
+        ImageView btnBack = findViewById(R.id.btnBack);
+        if (topBar == null && btnBack != null && btnBack.getParent() instanceof View) {
+            topBar = (View) btnBack.getParent();
+        }
+
+        if (topBar != null) {
+            int baseTop = topBar.getPaddingTop();
+            int baseBottom = topBar.getPaddingBottom();
+            int baseStart = topBar.getPaddingStart();
+            int baseEnd = topBar.getPaddingEnd();
+
+            ViewCompat.setOnApplyWindowInsetsListener(topBar, (v, insets) -> {
+                Insets statusBars = insets.getInsets(WindowInsetsCompat.Type.statusBars());
+                v.setPaddingRelative(
+                        baseStart,
+                        baseTop + statusBars.top,
+                        baseEnd,
+                        baseBottom
+                );
+                return insets;
+            });
+        }
+
+        View contentContainer = (View) rvFoodItems.getParent();
+        if (contentContainer != null) {
+            int baseLeft = contentContainer.getPaddingLeft();
+            int baseTop = contentContainer.getPaddingTop();
+            int baseRight = contentContainer.getPaddingRight();
+            int baseBottom = contentContainer.getPaddingBottom();
+
+            ViewCompat.setOnApplyWindowInsetsListener(contentContainer, (v, insets) -> {
+                Insets navBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars());
+                v.setPadding(
+                        baseLeft,
+                        baseTop,
+                        baseRight,
+                        baseBottom + navBars.bottom
+                );
+                return insets;
+            });
+        }
+    }
     private void setupFoodList() {
-        RecyclerView rvFoodItems = findViewById(R.id.rvFoodItems);
         rvFoodItems.setLayoutManager(new LinearLayoutManager(this));
         adapter = new FoodItemAdapter(new ArrayList<>());
         rvFoodItems.setAdapter(adapter);
     }
 
-    // Search the food list as the user types
     private void setupSearch() {
-        EditText etSearchFood = findViewById(R.id.etSearchFood);
         etSearchFood.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -95,70 +156,56 @@ public class RestaurantDetails extends AppCompatActivity {
     }
 
     private void setupReserveButton() {
-        findViewById(R.id.btnReserve).setOnClickListener(v -> {
+        btnReserve.setOnClickListener(v -> {
             Map<Integer, Integer> selected = adapter.getSelectedQuantities();
-            if (selected.isEmpty()) {
+            if (selected == null || selected.isEmpty()) {
                 Toast.makeText(this, R.string.details_select_item, Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            ArrayList<Integer> foodIds = new ArrayList<>(selected.keySet());
+            ArrayList<Integer> foodIds = new ArrayList<>();
             ArrayList<Integer> quantities = new ArrayList<>();
-            for (Integer foodId : foodIds) {
-                quantities.add(selected.get(foodId));
+
+            for (Map.Entry<Integer, Integer> entry : selected.entrySet()) {
+                Integer qty = entry.getValue();
+                if (qty != null && qty > 0) {
+                    foodIds.add(entry.getKey());
+                    quantities.add(qty);
+                }
+            }
+
+            if (foodIds.isEmpty()) {
+                Toast.makeText(this, R.string.details_select_item, Toast.LENGTH_SHORT).show();
+                return;
             }
 
             Intent intent = new Intent(RestaurantDetails.this, Payment.class);
-            intent.putExtra("restaurant_id", restaurantId);
-            intent.putIntegerArrayListExtra("food_ids", foodIds);
-            intent.putIntegerArrayListExtra("quantities", quantities);
+            intent.putExtra(EXTRA_RESTAURANT_ID, restaurantId);
+            intent.putIntegerArrayListExtra(EXTRA_FOOD_IDS, foodIds);
+            intent.putIntegerArrayListExtra(EXTRA_QUANTITIES, quantities);
             startActivity(intent);
         });
     }
 
-    // Loads the restaurant info shown at the top
-//    private void loadRestaurant() {
-//        executor.execute(() -> {
-//            Restaurant restaurant = db.restaurantDao().getRestaurantById(restaurantId);
-//            runOnUiThread(() -> {
-//                if (restaurant == null) {
-//                    finish();
-//                    return;
-//                }
-//                showRestaurant(restaurant);
-//            });
-//        });
-//    }
-//
-//    // Loads all food items, or only those matching the search keyword
-//    private void loadFoodItems(String keyword) {
-//        executor.execute(() -> {
-//            List<FoodItem> foods;
-//            if (keyword.isEmpty()) {
-//                foods = db.foodItemDao().getFoodItemsByRestaurantId(restaurantId);
-//            } else {
-//                foods = db.foodItemDao().searchFoodItemsByName(restaurantId, keyword);
-//            }
-//            runOnUiThread(() -> adapter.setItems(foods));
-//        });
-//    }
-
-    //testing dummy
-
     private void loadRestaurant() {
         if (USE_DUMMY_DATA) {
-            showRestaurantOrMessage(DummyData.getRestaurantById(restaurantId));
+            handleRestaurantResult(DummyData.getRestaurantById(restaurantId));
             return;
         }
+
         executor.execute(() -> {
             Restaurant restaurant = db.restaurantDao().getRestaurantById(restaurantId);
-            runOnUiThread(() -> showRestaurantOrMessage(restaurant));
+            runOnUiThread(() -> handleRestaurantResult(restaurant));
         });
     }
 
-    private void showRestaurantOrMessage(Restaurant restaurant) {
+    private void handleRestaurantResult(Restaurant restaurant) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
         if (restaurant == null) {
             Toast.makeText(this, R.string.details_not_found, Toast.LENGTH_LONG).show();
+            finish();
             return;
         }
         showRestaurant(restaurant);
@@ -166,9 +213,12 @@ public class RestaurantDetails extends AppCompatActivity {
 
     private void loadFoodItems(String keyword) {
         if (USE_DUMMY_DATA) {
-            adapter.setItems(DummyData.getFoodItems(restaurantId, keyword));
+            List<FoodItem> foods = DummyData.getFoodItems(restaurantId, keyword);
+            adapter.setItems(foods != null ? foods : new ArrayList<>());
+            updateReserveState(foods);
             return;
         }
+
         executor.execute(() -> {
             List<FoodItem> foods;
             if (keyword.isEmpty()) {
@@ -176,26 +226,49 @@ public class RestaurantDetails extends AppCompatActivity {
             } else {
                 foods = db.foodItemDao().searchFoodItemsByName(restaurantId, keyword);
             }
-            runOnUiThread(() -> adapter.setItems(foods));
+            List<FoodItem> safeFoods = foods != null ? foods : new ArrayList<>();
+
+            runOnUiThread(() -> {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+                adapter.setItems(safeFoods);
+                updateReserveState(safeFoods);
+            });
         });
     }
 
+    private void updateReserveState(List<FoodItem> foods) {
+        btnReserve.setEnabled(foods != null && !foods.isEmpty());
+    }
 
     private void showRestaurant(Restaurant restaurant) {
-        ((TextView) findViewById(R.id.tvRestaurantName)).setText(restaurant.getRestaurantName());
-        ((TextView) findViewById(R.id.tvRestaurantAddress)).setText(
-                getString(R.string.restaurant_address_format,
-                        restaurant.getAddress(), restaurant.getCity()));
+        tvRestaurantName.setText(restaurant.getRestaurantName());
+        tvRestaurantAddress.setText(
+                getString(
+                        R.string.restaurant_address_format,
+                        restaurant.getAddress(),
+                        restaurant.getCity()
+                )
+        );
 
-        // Hours, phone and rating are optional, so only show what exists
         List<String> parts = new ArrayList<>();
-        if (restaurant.getOpeningHours() != null) parts.add(restaurant.getOpeningHours());
-        if (restaurant.getContactInfo() != null) parts.add(restaurant.getContactInfo());
+        if (restaurant.getOpeningHours() != null && !restaurant.getOpeningHours().trim().isEmpty()) {
+            parts.add(restaurant.getOpeningHours().trim());
+        }
+        if (restaurant.getContactInfo() != null && !restaurant.getContactInfo().trim().isEmpty()) {
+            parts.add(restaurant.getContactInfo().trim());
+        }
         if (restaurant.getRating() != null) {
             parts.add(getString(R.string.details_rating_format, restaurant.getRating()));
         }
-        ((TextView) findViewById(R.id.tvRestaurantInfo))
-                .setText(String.join("  |  ", parts));
+
+        if (parts.isEmpty()) {
+            tvRestaurantInfo.setVisibility(View.GONE);
+        } else {
+            tvRestaurantInfo.setVisibility(View.VISIBLE);
+            tvRestaurantInfo.setText(String.join("  |  ", parts));
+        }
     }
 
     @Override
