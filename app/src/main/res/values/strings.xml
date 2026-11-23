@@ -147,6 +147,9 @@
     <string name="checkout_error_card_name">Enter the name on the card</string>
     <string name="checkout_error_card_number">Enter a 16-digit card number</string>
     <string name="checkout_order_placed">Order placed</string>
+    <string name="checkout_error_login">Please log in again to place an order.</string>
+    <string name="checkout_error_stock">Sorry, some items just ran out. Please go back and adjust your order.</string>
+    <string name="checkout_error_generic">Something went wrong. Please try again.</string>
 
     <string name="history_unknown_restaurant">Restaurant</string>
     <string name="history_line_one_format">Order #%1$d  |  %2$s</string>

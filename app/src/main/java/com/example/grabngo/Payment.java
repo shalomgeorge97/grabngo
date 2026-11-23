@@ -21,6 +21,19 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 
+import com.example.grabngo.database.AppDatabase;
+import com.example.grabngo.entity.Order;
+import com.example.grabngo.entity.OrderItem;
+import com.example.grabngo.util.OrderStatus;
+import com.example.grabngo.util.SessionManager;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class Payment extends AppCompatActivity {
 
     private TextInputLayout tilAddress, tilCardName, tilCardNumber;
@@ -30,6 +43,10 @@ public class Payment extends AppCompatActivity {
     private int restaurantId;
     private ArrayList<Integer> foodIds;
     private ArrayList<Integer> quantities;
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final List<FoodItem> foods = new ArrayList<>(); // same order as foodIds (can hold null)
+    private double total = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,29 +87,42 @@ public class Payment extends AppCompatActivity {
     }
 
     // Adds one row per food and calculates the total
+
+    // Loads each food from the database, then shows one row per food and the total
     private void showOrderSummary() {
-        LinearLayout llOrderLines = findViewById(R.id.llOrderLines);
-        double total = 0;
+        executor.execute(() -> {
+            AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+            List<FoodItem> loaded = new ArrayList<>();
+            for (int id : foodIds) {
+                loaded.add(db.foodItemDao().getFoodItemById(id));
+            }
 
-        for (int i = 0; i < foodIds.size(); i++) {
-            // TODO: replace with FoodItemDao.getFoodItemById (on a background thread)
-            FoodItem food = DummyData.getFoodItemById(foodIds.get(i));
-            if (food == null) continue;
+            runOnUiThread(() -> {
+                LinearLayout llOrderLines = findViewById(R.id.llOrderLines);
+                foods.clear();
+                foods.addAll(loaded);
+                total = 0;
 
-            int quantity = quantities.get(i);
-            double linePrice = food.getDiscountedPrice() * quantity;
-            total += linePrice;
+                for (int i = 0; i < foods.size(); i++) {
+                    FoodItem food = foods.get(i);
+                    if (food == null) continue;
 
-            View line = LayoutInflater.from(this)
-                    .inflate(R.layout.item_order_line, llOrderLines, false);
-            ((TextView) line.findViewById(R.id.tvLineName))
-                    .setText(getString(R.string.checkout_line_format, food.getName(), quantity));
-            ((TextView) line.findViewById(R.id.tvLinePrice))
-                    .setText(getString(R.string.price_format, linePrice));
-            llOrderLines.addView(line);
-        }
+                    int quantity = quantities.get(i);
+                    double linePrice = food.getDiscountedPrice() * quantity;
+                    total += linePrice;
 
-        ((TextView) findViewById(R.id.tvTotal)).setText(getString(R.string.price_format, total));
+                    View line = LayoutInflater.from(this)
+                            .inflate(R.layout.item_order_line, llOrderLines, false);
+                    ((TextView) line.findViewById(R.id.tvLineName))
+                            .setText(getString(R.string.checkout_line_format, food.getName(), quantity));
+                    ((TextView) line.findViewById(R.id.tvLinePrice))
+                            .setText(getString(R.string.price_format, linePrice));
+                    llOrderLines.addView(line);
+                }
+                ((TextView) findViewById(R.id.tvTotal))
+                        .setText(getString(R.string.price_format, total));
+            });
+        });
     }
 
     // Shows the address field only when Delivery is selected
@@ -142,12 +172,57 @@ public class Payment extends AppCompatActivity {
             return;
         }
 
-        // TODO: save the order in the database (Order, OrderItem) and reduce the stock
-        Toast.makeText(this, R.string.checkout_order_placed, Toast.LENGTH_SHORT).show();
+        int customerId = new SessionManager(this).getUserId();
+        if (customerId <= 0) {
+            Toast.makeText(this, R.string.checkout_error_login, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (foods.isEmpty() || total <= 0) {
+            return; // summary not loaded yet
+        }
 
-        Intent intent = new Intent(Payment.this, OrderDetails.class);
-        intent.putExtra("order_id", 1); // temporary, will be the real order id
-        startActivity(intent);
-        finish();
+        View btn = findViewById(R.id.btnConfirmPay);
+        btn.setEnabled(false); // stops double taps creating two orders
+
+        String fulfillment = isDelivery() ? "DELIVERY" : "PICKUP"; // match OrderStatus/teammates' values
+        String address = isDelivery() ? text(etAddress) : null;
+        String date = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+                .format(new Date());
+
+        // Note: card details are only validated here, never saved anywhere.
+        executor.execute(() -> {
+            List<OrderItem> items = new ArrayList<>();
+            for (int i = 0; i < foods.size(); i++) {
+                FoodItem food = foods.get(i);
+                if (food == null) continue;
+                items.add(new OrderItem(0, food.getFoodId(),
+                        quantities.get(i), food.getDiscountedPrice()));
+            }
+            Order order = new Order(customerId, restaurantId, date, fulfillment,
+                    OrderStatus.PENDING, total, address);
+
+            try {
+                long orderId = AppDatabase.getDatabase(getApplicationContext())
+                        .orderTransactionDao().placeOrder(order, items);
+
+                runOnUiThread(() -> {
+                    Toast.makeText(this, R.string.checkout_order_placed, Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Payment.this, OrderDetails.class);
+                    intent.putExtra("order_id", (int) orderId);
+                    startActivity(intent);
+                    finish();
+                });
+            } catch (IllegalStateException e) {   // not enough stock, everything rolled back
+                runOnUiThread(() -> {
+                    Toast.makeText(this, R.string.checkout_error_stock, Toast.LENGTH_LONG).show();
+                    btn.setEnabled(true);
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, R.string.checkout_error_generic, Toast.LENGTH_LONG).show();
+                    btn.setEnabled(true);
+                });
+            }
+        });
     }
 }
