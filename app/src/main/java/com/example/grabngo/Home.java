@@ -22,12 +22,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import com.google.android.material.textfield.TextInputEditText;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import android.view.View;
+
 public class Home extends AppCompatActivity {
 
     // Data shown in the list
     private final List<Restaurant> restaurantList = new ArrayList<>();
     private final Map<Integer, Integer> itemCounts = new HashMap<>();
     private RestaurantAdapter adapter;
+    private final List<Restaurant> allRestaurants = new ArrayList<>();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private String searchText = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,14 +89,59 @@ public class Home extends AppCompatActivity {
         RecyclerView rvRestaurants = findViewById(R.id.rvRestaurants);
         rvRestaurants.setLayoutManager(new LinearLayoutManager(this));
 
-        loadFakeRestaurants(); // temporary, replaced by database data later
-
         adapter = new RestaurantAdapter(restaurantList, itemCounts, restaurant -> {
             Intent intent = new Intent(Home.this, RestaurantDetails.class);
             intent.putExtra("restaurant_id", restaurant.getRestaurantId());
             startActivity(intent);
         });
         rvRestaurants.setAdapter(adapter);
+
+        // Search box: filters by restaurant name or city while typing
+        TextInputEditText search = findViewById(R.id.etSearch);
+        search.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) { }
+            @Override public void onTextChanged(CharSequence s, int st, int b, int c) { }
+            @Override public void afterTextChanged(Editable s) {
+                searchText = s.toString().trim().toLowerCase();
+                applyFilter();
+            }
+        });
+
+    }
+
+    // Reads restaurants and their food counts from the database (background thread)
+    private void loadRestaurants() {
+        executor.execute(() -> {
+            AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+            List<Restaurant> restaurants = db.restaurantDao().getAllRestaurants();
+            Map<Integer, Integer> counts = new HashMap<>();
+            for (Restaurant r : restaurants) {
+                counts.put(r.getRestaurantId(),
+                        db.foodItemDao().getFoodItemsByRestaurantId(r.getRestaurantId()).size());
+            }
+            runOnUiThread(() -> {
+                allRestaurants.clear();
+                allRestaurants.addAll(restaurants);
+                itemCounts.clear();
+                itemCounts.putAll(counts);
+                applyFilter();
+            });
+        });
+    }
+
+    // Shows only the restaurants that match the search text
+    private void applyFilter() {
+        restaurantList.clear();
+        for (Restaurant r : allRestaurants) {
+            String name = r.getRestaurantName() == null ? "" : r.getRestaurantName().toLowerCase();
+            String city = r.getCity() == null ? "" : r.getCity().toLowerCase();
+            if (searchText.isEmpty() || name.contains(searchText) || city.contains(searchText)) {
+                restaurantList.add(r);
+            }
+        }
+        adapter.notifyDataSetChanged();
+        boolean empty = restaurantList.isEmpty();
+        findViewById(R.id.tvEmpty).setVisibility(empty ? View.VISIBLE : View.GONE);
     }
 
     // Handles taps on the bottom bar
@@ -107,25 +162,10 @@ public class Home extends AppCompatActivity {
         });
     }
 
-    // Temporary test data only, so the design can be checked
-    private void loadFakeRestaurants() {
-        Restaurant r1 = new Restaurant(1, "Green Bowl", "123 Main St", "New Westminster",
-                "604-555-0101", "9am - 9pm", 4.5, null);
-        r1.setRestaurantId(1);
-        itemCounts.put(1, 5);
-
-        Restaurant r2 = new Restaurant(2, "Fresh Bakery", "45 Royal Ave", "New Westminster",
-                "604-555-0102", "7am - 6pm", 4.2, null);
-        r2.setRestaurantId(2);
-        itemCounts.put(2, 3);
-
-        Restaurant r3 = new Restaurant(3, "Spice Kitchen", "88 Columbia St", "Vancouver",
-                "604-555-0103", "11am - 10pm", 4.7, null);
-        r3.setRestaurantId(3);
-        itemCounts.put(3, 1);
-
-        restaurantList.add(r1);
-        restaurantList.add(r2);
-        restaurantList.add(r3);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((BottomNavigationView) findViewById(R.id.bottomNav)).setSelectedItemId(R.id.nav_home);
+        loadRestaurants();
     }
 }
