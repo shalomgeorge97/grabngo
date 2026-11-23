@@ -163,6 +163,11 @@
     <!-- Bottom navigation -->
     <string name="nav_food">Food</string>
 
+    <!-- Customer reminders -->
+    <string name="reminders_title">Order updates</string>
+    <string name="reminders_empty">No order updates yet</string>
+    <string name="reminder_open_description">Open order updates</string>
+
 
     <string name="food_list_title">Food Management</string>
     <string name="food_list_heading">Manage Your Food</string>

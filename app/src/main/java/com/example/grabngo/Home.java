@@ -1,7 +1,9 @@
 package com.example.grabngo;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.grabngo.entity.Restaurant;
+import com.example.grabngo.database.AppDatabase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -39,6 +42,36 @@ public class Home extends AppCompatActivity {
 
         setupRestaurantList();
         setupBottomNavigation();
+
+        // >>> START: Ami's implementation - Reminder functionality
+        updateUnreadReminderDot();
+
+        ImageView reminderButton = findViewById(R.id.btnReminders);
+        findViewById(R.id.btnReminders).setOnClickListener(v -> {
+            reminderButton.setImageResource(R.drawable.bell);
+            startActivity(new Intent(Home.this, ReminderActivity.class));
+        });
+        // <<< END: Ami's implementation
+    }
+
+    // Implemented by Ami
+    private void updateUnreadReminderDot() {
+        SharedPreferences preferences = getSharedPreferences(
+                "GrabNGoSession", MODE_PRIVATE);
+        int customerId = preferences.getInt("user_id", -1);
+
+        boolean hasUnreadReminder = false;
+        if (customerId > 0) {
+            hasUnreadReminder = AppDatabase.getDatabase(getApplicationContext())
+                    .reminderDao().hasUnreadLatestReminder(customerId);
+        }
+
+        ImageView reminderButton = findViewById(R.id.btnReminders);
+        if (hasUnreadReminder) {
+            reminderButton.setImageResource(R.drawable.bell_unread);
+        } else {
+            reminderButton.setImageResource(R.drawable.bell);
+        }
     }
 
     // Sets up the RecyclerView with the adapter

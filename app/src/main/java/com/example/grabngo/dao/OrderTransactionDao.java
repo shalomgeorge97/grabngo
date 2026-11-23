@@ -7,43 +7,73 @@ import androidx.room.Transaction;
 
 import com.example.grabngo.entity.Order;
 import com.example.grabngo.entity.OrderItem;
+import com.example.grabngo.util.OrderStatus;
 
 import java.util.List;
 
 @Dao
-public abstract class OrderTransactionDao {
+public interface OrderTransactionDao {
 
     // Insert an order
     @Insert
-    public abstract long addOrder(Order order);
+    long addOrder(Order order);
 
     // Insert order items
     @Insert
-    public abstract void addOrderItems(List<OrderItem> items);
+    void addOrderItems(List<OrderItem> items);
+
+    @Query("UPDATE `ORDERS` SET status = :newStatus WHERE order_id = :orderId")
+    int setOrderStatus(int orderId, String newStatus);
+
+    @Query("SELECT * FROM `ORDERS` WHERE order_id = :orderId")
+    Order getOrderById(int orderId);
 
     // Decrease food stock
     @Query("UPDATE FOOD_ITEM SET available_quantity = available_quantity - :quantity " +
             "WHERE food_id = :foodId AND :quantity > 0 " +
             "AND available_quantity >= :quantity")
-    public abstract int decreaseAvailableQuantity(int foodId, int quantity);
+    int decreaseAvailableQuantity(int foodId, int quantity);
 
     // Update order status only if it is still pending
     @Query("UPDATE `ORDERS` SET status = :newStatus " +
-            "WHERE order_id = :orderId AND status = 'PENDING'")
-    public abstract int updatePendingOrderStatus(int orderId, String newStatus);
+            "WHERE order_id = :orderId AND status = '" + OrderStatus.PENDING + "'")
+    int updatePendingOrderStatus(int orderId, String newStatus);
 
     // Get order items
     @Query("SELECT * FROM ORDER_ITEM WHERE order_id = :orderId")
-    public abstract List<OrderItem> getOrderItemsByOrderId(int orderId);
+    List<OrderItem> getOrderItemsByOrderId(int orderId);
 
     // Restore food stock
     @Query("UPDATE FOOD_ITEM SET available_quantity = available_quantity + :quantity " +
             "WHERE food_id = :foodId AND :quantity > 0")
-    public abstract int increaseAvailableQuantity(int foodId, int quantity);
+    int increaseAvailableQuantity(int foodId, int quantity);
+
+//    /** Update a manager-controlled status and create its customer reminder atomically. */
+//    @Transaction
+//    public boolean updateOrderStatusAndCreateReminder(int orderId, String newStatus) {
+//        if (OrderStatus.REJECTED.equals(newStatus)) {
+//            return false;
+//        }
+//
+//        Order order = getOrderById(orderId);
+//        if (order == null || !OrderStatus.getAllowedNextStatuses(
+//                order.getStatus(), order.getFulfillmentType()).contains(newStatus)) {
+//            return false;
+//        }
+//
+//        int updated = setOrderStatus(orderId, newStatus);
+//        if (updated == 0) {
+//            return false;
+//        }
+//
+//        createStatusReminder(orderId, newStatus);
+//        return true;
+//    }
 
     // Place order and decrease food stock
     @Transaction
-    public long placeOrder(Order order, List<OrderItem> items) {
+    // `default` lets this interface method contain the transaction's implementation.
+    default long placeOrder(Order order, List<OrderItem> items) {
 
         long orderId = addOrder(order);
 
@@ -69,9 +99,9 @@ public abstract class OrderTransactionDao {
 
     // Reject an order and restore food stock
     @Transaction
-    public boolean rejectOrder(int orderId) {
+    default boolean rejectOrder(int orderId) {
 
-        int result = updatePendingOrderStatus(orderId, "REJECTED");
+        int result = updatePendingOrderStatus(orderId, OrderStatus.REJECTED);
 
         if (result == 0) {
             return false;
@@ -95,9 +125,9 @@ public abstract class OrderTransactionDao {
 
     // Cancel an order and restore food stock
     @Transaction
-    public boolean cancelOrder(int orderId) {
+    default boolean cancelOrder(int orderId) {
 
-        int result = updatePendingOrderStatus(orderId, "CANCELLED");
+        int result = updatePendingOrderStatus(orderId, OrderStatus.CANCELLED);
 
         if (result == 0) {
             return false;

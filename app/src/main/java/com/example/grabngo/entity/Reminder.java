@@ -36,8 +36,14 @@ public class Reminder {
     @ColumnInfo(name = "reminder_datetime")
     private String reminderDatetime;
 
-    @ColumnInfo(name = "is_sent")
-    private boolean isSent = false;
+//    @ColumnInfo(name = "is_sent")
+//    private boolean isSent = false;
+
+
+    // Tracks whether the customer has viewed the reminder
+    // Home uses it to choose the bell icon.
+    @ColumnInfo(name = "is_read")
+    private boolean isRead = false;
 
 
     // Default Constructor
@@ -71,7 +77,8 @@ public class Reminder {
     @NonNull
     public String getReminderDatetime() { return reminderDatetime; }
 
-    public boolean isSent() { return isSent; }
+    //public boolean isSent() { return isSent; }
+    public boolean isRead() { return isRead; }
 
 
     // Setters
@@ -93,7 +100,11 @@ public class Reminder {
         this.reminderDatetime = reminderDatetime;
     }
 
-    public void setSent(boolean sent) {
-        isSent = sent;
+//    public void setSent(boolean sent) {
+//        isSent = sent;
+//    }
+
+    public void setRead(boolean read) {
+        isRead = read;
     }
 }
