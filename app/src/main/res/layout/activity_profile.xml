@@ -108,6 +108,10 @@
                 android:maxLines="1"
                 android:textColor="@color/grabngo_text"
                 android:textSize="14sp"
+                android:enabled="false"
+                android:focusable="false"
+                android:clickable="false"
+                android:cursorVisible="false"
                 tools:ignore="VisualLintTextFieldSize" />
 
             <TextView

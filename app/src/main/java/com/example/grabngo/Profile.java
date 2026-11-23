@@ -15,7 +15,7 @@ import com.example.grabngo.util.BottomNavigationHelper;
 import com.example.grabngo.util.SessionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.Locale;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -43,6 +43,9 @@ public class Profile extends AppCompatActivity {
 
         edtName = findViewById(R.id.edtProfileName);
         edtEmail = findViewById(R.id.edtProfileEmail);
+        edtEmail.setEnabled(false);
+        edtEmail.setFocusable(false);
+        edtEmail.setClickable(false);
         edtAddress = findViewById(R.id.edtProfileAddress);
         btnSave = findViewById(R.id.btnProfileSave);
         Button btnLogout = findViewById(R.id.btnProfileLogout);
@@ -108,17 +111,11 @@ public class Profile extends AppCompatActivity {
         }
 
         String name = edtName.getText().toString().trim();
-        String email = edtEmail.getText().toString().trim().toLowerCase(Locale.ROOT);
         String address = edtAddress.getText().toString().trim();
 
         if (name.isEmpty()) {
             edtName.setError(getString(R.string.error_name_required));
             edtName.requestFocus();
-            return;
-        }
-        if (email.isEmpty()) {
-            edtEmail.setError(getString(R.string.error_email_required));
-            edtEmail.requestFocus();
             return;
         }
         if (address.isEmpty()) {
@@ -131,30 +128,27 @@ public class Profile extends AppCompatActivity {
         int currentUserId = currentUser.getUserId();
         databaseExecutor.execute(() -> {
             User updatedUser = null;
-            boolean emailInUse = false;
             Exception saveError = null;
 
             try {
                 AppDatabase database = AppDatabase.getDatabase(getApplicationContext());
-                emailInUse = database.userDao().isEmailUsedByAnotherUser(email, currentUserId);
-
-                if (!emailInUse) {
                     // Reload the row on the worker thread, then update the database record.
                     updatedUser = database.userDao().getUserById(currentUserId);
                     if (updatedUser != null) {
+
                         updatedUser.setName(name);
-                        updatedUser.setEmail(email);
                         updatedUser.setAddress(address);
+
                         database.userDao().update(updatedUser);
                     }
-                }
+
             } catch (Exception exception) {
                 saveError = exception;
             }
 
             final User savedUser = updatedUser;
-            final boolean duplicateEmail = emailInUse;
             final Exception error = saveError;
+
             runOnUiThread(() -> {
                 if (isFinishing() || isDestroyed()) {
                     return;
@@ -164,14 +158,21 @@ public class Profile extends AppCompatActivity {
                 if (error != null) {
                     Toast.makeText(this, R.string.error_profile_save,
                             Toast.LENGTH_LONG).show();
-                } else if (duplicateEmail) {
-                    edtEmail.setError(getString(R.string.error_email_in_use));
-                    edtEmail.requestFocus();
                 } else if (savedUser == null) {
                     sessionManager.clearSession();
+
+                    Toast.makeText(this,
+                            R.string.error_profile_user_missing,
+                            Toast.LENGTH_LONG).show();
+
                     openWelcomeAndClearBackStack();
                 } else {
                     currentUser = savedUser;
+
+                    edtName.setText(savedUser.getName());
+                    edtEmail.setText(savedUser.getEmail());
+                    edtAddress.setText(savedUser.getAddress());
+
                     Toast.makeText(this, R.string.message_profile_saved,
                             Toast.LENGTH_SHORT).show();
                 }
