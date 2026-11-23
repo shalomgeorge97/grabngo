@@ -9,30 +9,30 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.grabngo.entity.Order;
+import com.example.grabngo.entity.CustomerOrder;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
 
-    // Lets the screen decide what happens when a card is tapped
     public interface OnOrderClickListener {
-        void onOrderClick(Order order);
+        void onOrderClick(CustomerOrder order);
     }
 
-    private List<Order> orders;
+    private final List<CustomerOrder> orders = new ArrayList<>();
     private final OnOrderClickListener listener;
 
-    public OrderAdapter(List<Order> orders,
-                             OnOrderClickListener listener) {
-        this.orders = orders;
+    public OrderAdapter(List<CustomerOrder> initialOrders, OnOrderClickListener listener) {
         this.listener = listener;
+        setData(initialOrders);
     }
 
-    // Used later when search results or database data change
-    public void setData(List<Order> orders, Map<Integer, Integer> itemCounts) {
-        this.orders = orders;
+    public void setData(List<CustomerOrder> newOrders) {
+        orders.clear();
+        if (newOrders != null) {
+            orders.addAll(newOrders);
+        }
         notifyDataSetChanged();
     }
 
@@ -46,21 +46,32 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        Order order = orders.get(position);
+        CustomerOrder order = orders.get(position);
         Context context = holder.itemView.getContext();
 
         holder.orderName.setText(context.getString(
                 R.string.order_line_name_format,
-                order.getOrderId()));
+                order.orderId));
+
+        String customerLabel = (order.customerName != null && !order.customerName.trim().isEmpty())
+                ? order.customerName.trim()
+                : "Customer #" + order.customerId;
+
         holder.orderLine1.setText(context.getString(
                 R.string.order_line_one_format,
-               "John Doe", order.getFulfillmentType()));
+                customerLabel,
+                order.fulfillmentType != null ? order.fulfillmentType : ""));
 
         holder.orderLine2.setText(context.getString(
                 R.string.order_line_two_format,
-                order.getTotalAmount(), order.getStatus()));
+                order.totalAmount,
+                order.status != null ? order.status : ""));
 
-        holder.itemView.setOnClickListener(v -> listener.onOrderClick(order));
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onOrderClick(order);
+            }
+        });
     }
 
     @Override
@@ -68,7 +79,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         return orders.size();
     }
 
-    // Holds the views of one row so they are found only once
     static class OrderViewHolder extends RecyclerView.ViewHolder {
         final TextView orderName;
         final TextView orderLine1;
