@@ -7,6 +7,7 @@ import androidx.room.Update;
 
 import com.example.grabngo.entity.CustomerOrder;
 import com.example.grabngo.entity.Order;
+import com.example.grabngo.util.OrderStatus;
 
 import java.util.List;
 
@@ -28,14 +29,16 @@ public interface OrderDao {
     //Get active orders
     @Query("SELECT * FROM ORDERS " +
             "WHERE customer_id = :customerId " +
-            "AND status IN ('PENDING', 'ACCEPTED', 'READY') " +
+            "AND status IN ('" + OrderStatus.PENDING + "', '" + OrderStatus.ACCEPTED +
+            "', '" + OrderStatus.READY + "') " +
             "ORDER BY order_id DESC")
     List<Order> getActiveOrdersByCustomerId(int customerId);
 
     //Get past orders
     @Query("SELECT * FROM ORDERS " +
             "WHERE customer_id = :customerId " +
-            "AND status IN ('PICKED_UP', 'DELIVERED', 'REJECTED', 'CANCELLED') " +
+            "AND status IN ('" + OrderStatus.PICKED_UP + "', '" + OrderStatus.DELIVERED +
+            "', '" + OrderStatus.REJECTED + "', '" + OrderStatus.CANCELLED + "') " +
             "ORDER BY order_id DESC")
     List<Order> getPastOrdersByCustomerId(int customerId);
 

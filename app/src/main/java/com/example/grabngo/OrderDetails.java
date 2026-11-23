@@ -165,6 +165,31 @@ public class OrderDetails extends AppCompatActivity {
 //            Intent intent = new Intent(this, SendReminder.class);
 //            intent.putExtra(EXTRA_ORDER_ID, currentOrder.getOrderId());
 //            startActivity(intent);
+
+            // >>> START: Ami's implementation - Reminder functionality
+            // This implementation saves a predefined, status-specific reminder directly to the database.
+            // It does not open a separate Activity.
+
+            //Get the status of current order.
+            String status = currentOrder.getStatus();
+            //This button only handles these three statuses. For Accept/Reject, there are other codes
+            if (!OrderStatus.READY.equals(status)
+                    && !OrderStatus.PICKED_UP.equals(status)
+                    && !OrderStatus.DELIVERED.equals(status)) {
+                return;
+            }
+
+            // Get the orderID of current order.
+            int targetOrderId = currentOrder.getOrderId();
+            try {
+                //create a reminder
+                db.reminderDao().createStatusReminder(targetOrderId, status);
+                Toast.makeText(this, "Reminder sent.", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Toast.makeText(this, "Failed to send reminder.", Toast.LENGTH_SHORT).show();
+            }
+
+            // <<< END: Ami's implementation
         });
     }
 
@@ -235,6 +260,29 @@ public class OrderDetails extends AppCompatActivity {
                     return true;
                 });
 
+                // >>> START: Ami's implementation - Reminder functionality
+                // Reminder saving is considered successful unless saving throws an exception.
+                boolean reminderSaved = true;
+
+                // Create a reminder only after the order status update succeeded,
+                // and only for Accept or Reject.
+                if (updated && (OrderStatus.ACCEPTED.equals(targetStatus)
+                        || OrderStatus.REJECTED.equals(targetStatus))) {
+                    try {
+                        // Save the order ID and new status with its predefined message and date/time.
+                        db.reminderDao().createStatusReminder(targetOrderId, targetStatus);
+                    } catch (Exception reminderException) {
+                        // Remember the failure so the result can be reported.
+                        reminderSaved = false;
+                    }
+                }
+
+                // Keep a final copy so it can be read inside the UI callback below.
+                final boolean reminderWasSaved = reminderSaved;
+                // <<< END: Ami's implementation
+
+
+
                 Order refreshedOrder = orderDao.getOrderById(targetOrderId);
                 List<OrderItemDetails> refreshedItems = refreshedOrder != null
                         ? orderItemDao.getOrderItemDetails(targetOrderId)
@@ -260,7 +308,19 @@ public class OrderDetails extends AppCompatActivity {
                     renderOrderItems(refreshedItems);
                     bindActionControls(refreshedOrder);
                     setActionsEnabled(true);
-                    Toast.makeText(this, "Order updated to " + targetStatus + ".", Toast.LENGTH_SHORT).show();
+
+                    // >>> START: Ami's implementation - Reminder functionality
+                    // Start with a message confirming the order status update.
+                    String resultMessage = "Order updated to " + targetStatus + ".";
+
+                    // Add a warning if the order was updated but its reminder was not saved.
+                    if (!reminderWasSaved) {
+                        resultMessage += " Reminder could not be saved.";
+                    }
+
+                    // Show the result message briefly on the screen.
+                    Toast.makeText(this, resultMessage, Toast.LENGTH_SHORT).show();
+                    // <<< END: Ami's implementation
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {
@@ -309,6 +369,7 @@ public class OrderDetails extends AppCompatActivity {
             }
         }
     }
+
     private void renderOrderSummary(Order order) {
         setTextIfPresent(
                 R.id.tvOrderId,

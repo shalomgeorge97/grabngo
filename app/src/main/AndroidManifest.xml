@@ -58,6 +58,9 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".ReminderActivity"
+            android:exported="false" />
+        <activity
             android:name=".FoodList"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
