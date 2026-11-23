@@ -53,7 +53,7 @@ public class OrderHistory extends AppCompatActivity {
         rvOrderHistory.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new OrderHistoryAdapter(orderList, restaurantNames, order -> {
-            Intent intent = new Intent(OrderHistory.this, OrderDetails.class);
+            Intent intent = new Intent(OrderHistory.this, CustomerOrderDetails.class);
             intent.putExtra("order_id", order.getOrderId());
             startActivity(intent);
         });
