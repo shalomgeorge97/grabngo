@@ -21,11 +21,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.grabngo.database.AppDatabase;
+import com.example.grabngo.util.SessionManager;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class OrderHistory extends AppCompatActivity {
 
     private final List<Order> orderList = new ArrayList<>();
     private final Map<Integer, String> restaurantNames = new HashMap<>();
     private OrderHistoryAdapter adapter;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,16 +52,51 @@ public class OrderHistory extends AppCompatActivity {
         RecyclerView rvOrderHistory = findViewById(R.id.rvOrderHistory);
         rvOrderHistory.setLayoutManager(new LinearLayoutManager(this));
 
-        loadFakeOrders(); // temporary, replaced by database data later
-
         adapter = new OrderHistoryAdapter(orderList, restaurantNames, order -> {
             Intent intent = new Intent(OrderHistory.this, OrderDetails.class);
             intent.putExtra("order_id", order.getOrderId());
             startActivity(intent);
         });
         rvOrderHistory.setAdapter(adapter);
+    }
 
-        updateEmptyState();
+    // Reads the logged-in customer's orders: active ones first, then past ones
+    private void loadOrders() {
+        int customerId = new SessionManager(this).getUserId();
+        executor.execute(() -> {
+            AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+            List<Order> loaded = new ArrayList<>();
+            Map<Integer, String> names = new HashMap<>();
+
+            if (customerId > 0) {
+                loaded.addAll(db.orderDao().getActiveOrdersByCustomerId(customerId));
+                loaded.addAll(db.orderDao().getPastOrdersByCustomerId(customerId));
+
+                for (Order o : loaded) {
+                    if (!names.containsKey(o.getRestaurantId())) {
+                        Restaurant r = db.restaurantDao().getRestaurantById(o.getRestaurantId());
+                        if (r != null) {
+                            names.put(r.getRestaurantId(), r.getRestaurantName());
+                        }
+                    }
+                }
+            }
+
+            runOnUiThread(() -> {
+                orderList.clear();
+                orderList.addAll(loaded);
+                restaurantNames.clear();
+                restaurantNames.putAll(names);
+                adapter.setData(orderList, restaurantNames);
+                updateEmptyState();
+            });
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadOrders(); // refresh after placing or cancelling an order
     }
 
     // Shows a message instead of an empty screen when there are no orders
@@ -82,26 +123,6 @@ public class OrderHistory extends AppCompatActivity {
     }
 
     // Temporary test data only, so the design can be checked
-    private void loadFakeOrders() {
-        addFakeOrder(1042, 1, "2026-11-12", "Pickup", "Picked Up", 16.00);
-        addFakeOrder(1031, 2, "2026-11-08", "Pickup", "Picked Up", 9.50);
-        addFakeOrder(1020, 3, "2026-11-03", "Delivery", "Rejected", 12.00);
-        addFakeOrder(1008, 1, "2026-10-28", "Pickup", "Cancelled", 7.00);
 
-        // Turn restaurant ids into names for the list
-        for (Order order : orderList) {
-            Restaurant restaurant = DummyData.getRestaurantById(order.getRestaurantId());
-            if (restaurant != null) {
-                restaurantNames.put(restaurant.getRestaurantId(),
-                        restaurant.getRestaurantName());
-            }
-        }
-    }
 
-    private void addFakeOrder(int orderId, int restaurantId, String date,
-                              String type, String status, double total) {
-        Order order = new Order(1, restaurantId, date, type, status, total, null);
-        order.setOrderId(orderId);
-        orderList.add(order);
-    }
 }
