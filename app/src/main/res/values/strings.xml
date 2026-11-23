@@ -183,5 +183,8 @@
     <string name="food_list_heading">Manage Your Food</string>
     <string name="food_list_placeholder">Your food listings will appear here. You can manage available food items from this section.</string>
     <string name="cd_food_icon">Food management icon</string>
+    <string name="no_food_item_found">No food item found</string>
+    <string name="add_food_btn">Add Food</string>
+    <string name="no_restaurant_found_for_manager_account">No restaurant found for this manager account</string>
 
 </resources>
