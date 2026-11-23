@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:text="Accept" />
+                android:text="@string/order_accept_btn" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnReject"
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="Reject" />
+                android:text="@string/order_reject_btn" />
         </LinearLayout>
 
         <!-- Status update: visible once Accepted / Ready (toggle in code) -->
@@ -86,7 +86,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Update status"
+                android:text="@string/select_status_spinner"
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp" />
 
@@ -104,7 +104,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Send reminder" />
+            android:text="@string/update_order_status_btn" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
