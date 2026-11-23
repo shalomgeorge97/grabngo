@@ -38,6 +38,8 @@ public class OrderDetails extends AppCompatActivity {
 
     public static final String EXTRA_ORDER_ID = "order_id";
 
+    private static final String SPINNER_PROMPT = "Update status...";
+
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private AppDatabase db;
@@ -135,13 +137,16 @@ public class OrderDetails extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (isBindingSpinner || isMutating || currentOrder == null) {
-                    isBindingSpinner = false;
                     return;
                 }
-                if (position < 0 || position >= spinnerOptions.size()) {
+                if (position <= 0) {
                     return;
                 }
-                String targetStatus = spinnerOptions.get(position);
+                int optionIndex = position - 1;
+                if (optionIndex >= spinnerOptions.size()) {
+                    return;
+                }
+                String targetStatus = spinnerOptions.get(optionIndex);
                 if (targetStatus == null || targetStatus.equals(currentOrder.getStatus())) {
                     return;
                 }
@@ -161,34 +166,22 @@ public class OrderDetails extends AppCompatActivity {
             if (currentOrder == null) {
                 return;
             }
-//            handle the reminder part here @Ami
-//            Intent intent = new Intent(this, SendReminder.class);
-//            intent.putExtra(EXTRA_ORDER_ID, currentOrder.getOrderId());
-//            startActivity(intent);
 
             // >>> START: Ami's implementation - Reminder functionality
-            // This implementation saves a predefined, status-specific reminder directly to the database.
-            // It does not open a separate Activity.
-
-            //Get the status of current order.
             String status = currentOrder.getStatus();
-            //This button only handles these three statuses. For Accept/Reject, there are other codes
             if (!OrderStatus.READY.equals(status)
                     && !OrderStatus.PICKED_UP.equals(status)
                     && !OrderStatus.DELIVERED.equals(status)) {
                 return;
             }
 
-            // Get the orderID of current order.
             int targetOrderId = currentOrder.getOrderId();
             try {
-                //create a reminder
                 db.reminderDao().createStatusReminder(targetOrderId, status);
                 Toast.makeText(this, "Reminder sent.", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 Toast.makeText(this, "Failed to send reminder.", Toast.LENGTH_SHORT).show();
             }
-
             // <<< END: Ami's implementation
         });
     }
@@ -261,27 +254,19 @@ public class OrderDetails extends AppCompatActivity {
                 });
 
                 // >>> START: Ami's implementation - Reminder functionality
-                // Reminder saving is considered successful unless saving throws an exception.
                 boolean reminderSaved = true;
 
-                // Create a reminder only after the order status update succeeded,
-                // and only for Accept or Reject.
                 if (updated && (OrderStatus.ACCEPTED.equals(targetStatus)
                         || OrderStatus.REJECTED.equals(targetStatus))) {
                     try {
-                        // Save the order ID and new status with its predefined message and date/time.
                         db.reminderDao().createStatusReminder(targetOrderId, targetStatus);
                     } catch (Exception reminderException) {
-                        // Remember the failure so the result can be reported.
                         reminderSaved = false;
                     }
                 }
 
-                // Keep a final copy so it can be read inside the UI callback below.
                 final boolean reminderWasSaved = reminderSaved;
                 // <<< END: Ami's implementation
-
-
 
                 Order refreshedOrder = orderDao.getOrderById(targetOrderId);
                 List<OrderItemDetails> refreshedItems = refreshedOrder != null
@@ -310,15 +295,10 @@ public class OrderDetails extends AppCompatActivity {
                     setActionsEnabled(true);
 
                     // >>> START: Ami's implementation - Reminder functionality
-                    // Start with a message confirming the order status update.
                     String resultMessage = "Order updated to " + targetStatus + ".";
-
-                    // Add a warning if the order was updated but its reminder was not saved.
                     if (!reminderWasSaved) {
                         resultMessage += " Reminder could not be saved.";
                     }
-
-                    // Show the result message briefly on the screen.
                     Toast.makeText(this, resultMessage, Toast.LENGTH_SHORT).show();
                     // <<< END: Ami's implementation
                 });
@@ -363,9 +343,7 @@ public class OrderDetails extends AppCompatActivity {
         }
         for (OrderItem item : items) {
             if (item != null && item.getQuantity() > 0) {
-//                handle restock part here
-//                run the restock query and update the availability back to how it was before
-//                db.foodItemDao().incrementStock(item.getFoodId(), item.getQuantity());
+                db.foodItemDao().increaseAvailableQuantity(item.getFoodId(), item.getQuantity());
             }
         }
     }
@@ -431,10 +409,15 @@ public class OrderDetails extends AppCompatActivity {
         } else {
             updateStatusRow.setVisibility(View.VISIBLE);
             isBindingSpinner = true;
+
+            List<String> displayOptions = new ArrayList<>();
+            displayOptions.add(SPINNER_PROMPT);
+            displayOptions.addAll(spinnerOptions);
+
             ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
                     this,
                     android.R.layout.simple_spinner_item,
-                    spinnerOptions
+                    displayOptions
             );
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spStatus.setAdapter(spinnerAdapter);
