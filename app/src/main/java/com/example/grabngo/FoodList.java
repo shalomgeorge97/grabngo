@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,13 +28,13 @@ import com.example.grabngo.entity.Restaurant;
 import com.example.grabngo.util.BottomNavigationHelper;
 import com.example.grabngo.util.SessionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 
 public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoodActionListener {
 
@@ -48,7 +49,7 @@ public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoo
     private TextView txtFoodListTitle;
     private TextView txtEmptyFoodList;
     private RecyclerView rvManagerFoodList;
-    private ExtendedFloatingActionButton fabAddFood;
+    private Button addFoodBtn;
 
     private int restaurantId = -1;
     private String currentQuery = "";
@@ -58,7 +59,7 @@ public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoo
         super.onCreate(savedInstanceState);
 
         sessionManager = new SessionManager(getApplicationContext());
-
+//        check app session status
         if (!sessionManager.hasActiveSession()
                 || !SessionManager.ROLE_MANAGER.equals(sessionManager.getUserRole())) {
             openWelcome();
@@ -73,18 +74,21 @@ public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoo
             ViewCompat.setOnApplyWindowInsetsListener(topBarContainer, (v, insets) -> {
                 Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
                 v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+
                 return insets;
             });
         }
 
+//        setup bottom navigator
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
         BottomNavigationHelper.configure(this, bottomNav, R.id.nav_food);
 
+//      setup db & dao
         AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
         restaurantDao = db.restaurantDao();
         foodItemDao = db.foodItemDao();
 
-        initViews();
+        initializeViews();
         setupSearch();
         setupAddButton();
 
@@ -99,14 +103,15 @@ public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoo
         }
     }
 
-    private void initViews() {
+    private void initializeViews() {
         txtFoodListTitle = findViewById(R.id.txtFoodListTitle);
         txtEmptyFoodList = findViewById(R.id.txtEmptyFoodList);
         rvManagerFoodList = findViewById(R.id.rvManagerFoodList);
-        fabAddFood = findViewById(R.id.fabAddFood);
+        addFoodBtn = findViewById(R.id.addFoodBtn);
 
         adapter = new FoodListAdapter(this);
         rvManagerFoodList.setLayoutManager(new LinearLayoutManager(this));
+
         rvManagerFoodList.setAdapter(adapter);
     }
 
@@ -115,6 +120,7 @@ public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoo
         etSearchFood.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -128,13 +134,15 @@ public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoo
     }
 
     private void setupAddButton() {
-        fabAddFood.setOnClickListener(v -> {
+        addFoodBtn.setOnClickListener(view->{
             if (restaurantId == -1) {
                 Toast.makeText(this, "No restaurant assigned to this manager", Toast.LENGTH_SHORT).show();
                 return;
             }
+
             Intent intent = new Intent(this, AddEditFood.class);
             intent.putExtra("restaurantId", restaurantId);
+
             startActivity(intent);
         });
     }
@@ -143,14 +151,17 @@ public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoo
         int managerId = sessionManager.getUserId();
         executor.execute(() -> {
             Restaurant restaurant = restaurantDao.getRestaurantByManagerId(managerId);
+//          no restaurant found
+//            disable add food button, show toggle message & hide
             if (restaurant == null) {
                 runOnUiThread(() -> {
                     restaurantId = -1;
-                    fabAddFood.setEnabled(false);
-                    txtEmptyFoodList.setText("No restaurant found for this manager account.");
+                    addFoodBtn.setEnabled(false);
+                    txtEmptyFoodList.setText(R.string.no_restaurant_found_for_manager_account);
                     txtEmptyFoodList.setVisibility(View.VISIBLE);
                     rvManagerFoodList.setVisibility(View.GONE);
                 });
+
                 return;
             }
 
@@ -158,8 +169,9 @@ public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoo
             List<FoodItem> items = foodItemDao.getFoodItemsByRestaurantId(restaurantId);
 
             runOnUiThread(() -> {
-                fabAddFood.setEnabled(true);
+                addFoodBtn.setEnabled(true);
                 txtFoodListTitle.setText(restaurant.getRestaurantName());
+
                 allFoodItems.clear();
                 allFoodItems.addAll(items);
                 applyFilter();
@@ -182,25 +194,25 @@ public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoo
     private void applyFilter() {
         List<FoodItem> filtered = new ArrayList<>();
         for (FoodItem item : allFoodItems) {
-            boolean matchesName = currentQuery.isEmpty()
-                    || item.getName().toLowerCase(Locale.ROOT).contains(currentQuery)
-                    || item.getCategory().toLowerCase(Locale.ROOT).contains(currentQuery);
-            if (matchesName) {
+            boolean matchesCategory = item.getCategory().toLowerCase(Locale.ROOT).contains(currentQuery);
+            boolean matchesFoodName = item.getName().toLowerCase(Locale.ROOT).contains(currentQuery);
+            if (currentQuery.isEmpty() || matchesFoodName || matchesCategory) {
                 filtered.add(item);
             }
         }
 
         adapter.setItems(filtered);
         boolean isEmpty = filtered.isEmpty();
-        txtEmptyFoodList.setText(currentQuery.isEmpty()
+        String setMsg = currentQuery.isEmpty()
                 ? "No food items yet. Tap Add Food to create one."
-                : "No matching food items found.");
+                : "No matching food items found.";
+        txtEmptyFoodList.setText(setMsg);
         txtEmptyFoodList.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         rvManagerFoodList.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
     }
 
     @Override
-    public void onFoodClick(@NonNull FoodItem item) {
+    public void onFoodClick(FoodItem item) {
         Intent intent = new Intent(this, AddEditFood.class);
         intent.putExtra("restaurantId", item.getRestaurantId());
         intent.putExtra("foodId", item.getFoodId());
