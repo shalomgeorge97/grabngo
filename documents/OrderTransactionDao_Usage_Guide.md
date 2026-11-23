@@ -1,718 +1,610 @@
-\# OrderTransactionDao – Usage Guide
+# OrderTransactionDao -- Usage Guide
 
+## 1. Overview
 
+`OrderTransactionDao` provides database operations for placing orders,
+managing order statuses, and maintaining food stock quantities.
 
-\## 1. Overview
-
-
-
-`OrderTransactionDao` manages order-related database operations that require multiple database changes to be executed together.
-
-
-
-It uses Room's `@Transaction` annotation to ensure that related database operations are handled as a single transaction.
-
-
+It uses Room's `@Transaction` annotation for multi-step operations that
+must succeed or fail as a single unit.
 
 It supports the following operations:
 
+  -----------------------------------------------------------------------
+  Method                              Description
+  ----------------------------------- -----------------------------------
+  `addOrder()`                        Insert a new order and return its
+                                      generated ID.
 
+  `addOrderItems()`                   Insert the items associated with an
+                                      order.
 
-| Method | Description |
+  `setOrderStatus()`                  Update an order's status without
+                                      checking its current status.
 
-|---|---|
+  `getOrderById()`                    Retrieve an order by its ID.
 
-| `placeOrder()` | Create a new order, insert its order items, and decrease food inventory. |
+  `decreaseAvailableQuantity()`       Decrease the available stock of a
+                                      food item if enough stock exists.
 
-| `rejectOrder()` | Reject a pending order and restore food inventory. |
+  `updatePendingOrderStatus()`        Update an order's status only when
+                                      its current status is `PENDING`.
 
-| `cancelOrder()` | Cancel a pending order and restore food inventory. |
+  `getOrderItemsByOrderId()`          Retrieve all items belonging to a
+                                      specific order.
 
+  `increaseAvailableQuantity()`       Restore or increase the available
+                                      stock of a food item.
 
+  `placeOrder()`                      Insert an order and its items, then
+                                      decrease the corresponding food
+                                      stock in one transaction.
 
-\### Why Use OrderTransactionDao?
+  `rejectOrder()`                     Reject a pending order and restore
+                                      its food stock in one transaction.
 
+  `cancelOrder()`                     Cancel a pending order and restore
+                                      its food stock in one transaction.
+  -----------------------------------------------------------------------
 
+------------------------------------------------------------------------
 
-Some order operations require changes to multiple database tables.
+## 2. Insert a New Order
 
+### Method
 
-
-For example, placing an order involves:
-
-
-
-1\. Inserting a new record into `ORDERS`.
-
-2\. Inserting related records into `ORDER\_ITEM`.
-
-3\. Decreasing the available quantity in `FOOD\_ITEM`.
-
-
-
-These operations should succeed or fail together.
-
-
-
-If any inventory update fails, the transaction is rolled back so that incomplete order data is not saved.
-
-
-
-\---
-
-
-
-\## 2. Place an Order
-
-
-
-\### Method
-
-
-
-```java
-
-long placeOrder(Order order, List<OrderItem> items);
-
+``` java
+long addOrder(Order order);
 ```
 
+### Purpose
 
+Inserts a new order into the `ORDERS` table.
 
-\### Purpose
+### Example
 
+``` java
+long orderId = orderTransactionDao.addOrder(order);
+```
 
+### Return Value
 
-Creates a new order, inserts its associated order items, and decreases the available quantity of each food item.
+Returns the automatically generated ID of the newly inserted order.
 
+This ID can be assigned to the related `OrderItem` objects before they
+are inserted.
 
+### When to Use
 
-All operations are executed within a single transaction.
+This method is used internally by `placeOrder()` to create the order
+record before inserting its order items.
 
+------------------------------------------------------------------------
 
+## 3. Insert Order Items
 
-\### Example
+### Method
 
+``` java
+void addOrderItems(List<OrderItem> items);
+```
 
+### Purpose
 
-```java
+Inserts a list of order items into the `ORDER_ITEM` table.
 
-Order order = new Order();
+Each item must be associated with the correct order ID before insertion.
 
+### Example
 
+``` java
+for (OrderItem item : items) {
+    item.setOrderId((int) orderId);
+}
 
-// Set order information
+orderTransactionDao.addOrderItems(items);
+```
 
-order.setCustomerId(customerId);
+### When to Use
 
-order.setRestaurantId(restaurantId);
+This method is used by `placeOrder()` after the new order has been
+inserted and its generated ID has been assigned to each order item.
 
-order.setStatus("PENDING");
+------------------------------------------------------------------------
 
-order.setTotalAmount(totalAmount);
+## 4. Set an Order Status
 
+### Method
 
+``` java
+int setOrderStatus(int orderId, String newStatus);
+```
 
-List<OrderItem> items = new ArrayList<>();
+### Purpose
 
+Updates the status of an order identified by its order ID.
 
+The query does not check the order's current status before updating it.
 
-OrderItem item1 = new OrderItem();
+### Example
 
-item1.setFoodId(1);
+``` java
+int rowsUpdated = orderTransactionDao.setOrderStatus(
+        orderId,
+        OrderStatus.ACCEPTED
+);
+```
 
-item1.setQuantity(2);
+### Return Value
 
-item1.setPrice(10.00);
+Returns the number of rows affected:
 
+-   `1`: The order was updated.
+-   `0`: No order with the specified ID was found.
 
+### When to Use
 
-OrderItem item2 = new OrderItem();
+Use this method when an order status needs to be updated without the
+pending-only condition.
 
-item2.setFoodId(2);
+**Note:** This method is a direct status update. It does not validate
+whether the requested status transition is allowed and does not create a
+Reminder record.
 
-item2.setQuantity(1);
+------------------------------------------------------------------------
 
-item2.setPrice(8.00);
+## 5. Get an Order by ID
 
+### Method
 
+``` java
+Order getOrderById(int orderId);
+```
 
-items.add(item1);
+### Purpose
 
-items.add(item2);
+Retrieves an order from the `ORDERS` table using its order ID.
 
+### Example
 
+``` java
+Order order = orderTransactionDao.getOrderById(orderId);
 
-// Place the order
+if (order != null) {
+    String currentStatus = order.getStatus();
+} else {
+    // Handle the case where the order does not exist
+}
+```
 
+### Return Value
+
+Returns the matching `Order` object, or `null` if no matching order is
+found.
+
+### When to Use
+
+Use this method when the current order information is needed before
+performing another operation.
+
+------------------------------------------------------------------------
+
+## 6. Decrease Available Food Quantity
+
+### Method
+
+``` java
+int decreaseAvailableQuantity(int foodId, int quantity);
+```
+
+### Purpose
+
+Decreases the available quantity of a food item in the `FOOD_ITEM`
+table.
+
+The update is performed only when:
+
+-   The specified food item exists.
+-   The requested quantity is greater than zero.
+-   The current available quantity is greater than or equal to the
+    requested quantity.
+
+### Example
+
+``` java
+int result = orderTransactionDao.decreaseAvailableQuantity(
+        foodId,
+        quantity
+);
+
+if (result > 0) {
+    // Stock was decreased successfully
+} else {
+    // The item was not found or there was insufficient stock
+}
+```
+
+### Return Value
+
+Returns the number of rows updated:
+
+-   `1`: The stock quantity was decreased.
+-   `0`: The update conditions were not satisfied.
+
+### When to Use
+
+This method is used by `placeOrder()` to decrease stock for each food
+item included in a newly placed order.
+
+------------------------------------------------------------------------
+
+## 7. Update Status Only if the Order Is Pending
+
+### Method
+
+``` java
+int updatePendingOrderStatus(int orderId, String newStatus);
+```
+
+### Purpose
+
+Updates an order's status only if its current status is
+`OrderStatus.PENDING`.
+
+The query checks both the order ID and the current status before
+performing the update.
+
+### Example
+
+``` java
+int result = orderTransactionDao.updatePendingOrderStatus(
+        orderId,
+        OrderStatus.REJECTED
+);
+
+if (result > 0) {
+    // The pending order status was updated
+} else {
+    // The order was not found or was no longer pending
+}
+```
+
+### Return Value
+
+Returns the number of rows updated:
+
+-   `1`: The order existed and was still pending, so its status was
+    updated.
+-   `0`: No matching pending order was found.
+
+### When to Use
+
+This method is used by `rejectOrder()` and `cancelOrder()` to ensure
+that only pending orders can be rejected or cancelled through these
+methods.
+
+------------------------------------------------------------------------
+
+## 8. Get Order Items by Order ID
+
+### Method
+
+``` java
+List<OrderItem> getOrderItemsByOrderId(int orderId);
+```
+
+### Purpose
+
+Retrieves all records from `ORDER_ITEM` that belong to the specified
+order.
+
+### Example
+
+``` java
+List<OrderItem> items =
+        orderTransactionDao.getOrderItemsByOrderId(orderId);
+
+for (OrderItem item : items) {
+    int foodId = item.getFoodId();
+    int quantity = item.getQuantity();
+}
+```
+
+### When to Use
+
+This method is used by `rejectOrder()` and `cancelOrder()` to find the
+food items and quantities that need to be returned to stock.
+
+------------------------------------------------------------------------
+
+## 9. Increase Available Food Quantity
+
+### Method
+
+``` java
+int increaseAvailableQuantity(int foodId, int quantity);
+```
+
+### Purpose
+
+Increases the available quantity of a food item in the `FOOD_ITEM`
+table.
+
+The update is performed only when the specified food item exists and the
+quantity is greater than zero.
+
+### Example
+
+``` java
+int result = orderTransactionDao.increaseAvailableQuantity(
+        foodId,
+        quantity
+);
+
+if (result > 0) {
+    // Stock was restored successfully
+} else {
+    // The food item was not found or the quantity was invalid
+}
+```
+
+### Return Value
+
+Returns the number of rows updated:
+
+-   `1`: The stock quantity was increased.
+-   `0`: The update conditions were not satisfied.
+
+### When to Use
+
+This method is used by `rejectOrder()` and `cancelOrder()` to restore
+the stock associated with an order.
+
+------------------------------------------------------------------------
+
+## 10. Place an Order
+
+### Method
+
+``` java
+@Transaction
+default long placeOrder(Order order, List<OrderItem> items);
+```
+
+### Purpose
+
+Places a new order and updates food stock as one database transaction.
+
+The method performs the following steps:
+
+1.  Inserts the order into the `ORDERS` table.
+2.  Gets the generated order ID.
+3.  Assigns that order ID to every `OrderItem`.
+4.  Inserts the order items into the `ORDER_ITEM` table.
+5.  Decreases the available stock for each food item.
+6.  Returns the generated order ID.
+
+### Example
+
+``` java
 long orderId = orderTransactionDao.placeOrder(order, items);
-
 ```
 
+### Return Value
 
+Returns the generated ID of the newly inserted order if all operations
+succeed.
 
-\### Processing Flow
+### When to Use
 
+Use this method when a customer places an order containing one or more
+food items.
 
+### Transaction Behavior
 
-The method performs the following operations:
+The `@Transaction` annotation makes the operations execute as one
+transaction.
 
+If any stock update fails, the method throws an `IllegalStateException`
+with the message:
 
-
-1\. Insert the order into `ORDERS`.
-
-2\. Retrieve the generated order ID.
-
-3\. Assign the order ID to every OrderItem.
-
-4\. Insert all order items into `ORDER\_ITEM`.
-
-5\. Decrease the available quantity of each food item.
-
-6\. Return the generated order ID.
-
-
-
-\### Return Value
-
-
-
-Returns the generated order ID when the transaction succeeds.
-
-
-
-\### Error Handling
-
-
-
-If a food item does not have sufficient stock, the method throws:
-
-
-
-```java
-
-IllegalStateException("Not enough food stock.");
-
+``` text
+Not enough food stock.
 ```
 
+Because the operations are transactional, the order insertion,
+order-item insertion, and stock changes are rolled back if the
+transaction fails.
 
+This prevents an order from being partially saved when the requested
+stock is unavailable.
 
-Because the method uses `@Transaction`, the preceding database changes are rolled back.
+------------------------------------------------------------------------
 
+## 11. Reject an Order
 
+### Method
 
-This prevents an order from being saved when its required inventory cannot be reserved.
-
-
-
-\### When to Use
-
-
-
-Use this method during Customer Checkout.
-
-
-
-For example:
-
-\- Customer confirms an order.
-
-\- The application creates the order with `PENDING` status.
-
-\- Order items are inserted.
-
-\- Available food quantities are decreased.
-
-
-
-\*\*Important:\*\* Do not call `OrderDao.addOrder()`, `OrderItemDao.addOrderItems()`, and `FoodItemDao.decreaseAvailableQuantity()` separately for the same checkout operation. Use `placeOrder()` to keep the operations within one transaction.
-
-
-
-\---
-
-
-
-\## 3. Reject an Order
-
-
-
-\### Method
-
-
-
-```java
-
-boolean rejectOrder(int orderId);
-
+``` java
+@Transaction
+default boolean rejectOrder(int orderId);
 ```
 
+### Purpose
 
+Rejects an order only if its current status is `PENDING`, then restores
+the stock of all food items associated with that order.
 
-\### Purpose
+### Process
 
+1.  Attempts to change the order status from `PENDING` to `REJECTED`.
+2.  If no pending order is updated, returns `false`.
+3.  Retrieves the order items associated with the order.
+4.  Increases the available stock for each item.
+5.  Returns `true` if all operations succeed.
 
+### Example
 
-Rejects an existing pending order and restores the food quantities associated with that order.
-
-
-
-All operations are executed within a single transaction.
-
-
-
-\### Example
-
-
-
-```java
-
-boolean rejected =
-
-&#x20;       orderTransactionDao.rejectOrder(orderId);
-
-
+``` java
+boolean rejected = orderTransactionDao.rejectOrder(orderId);
 
 if (rejected) {
-
-&#x20;   // Order rejected successfully
-
+    // The order was rejected and its stock was restored
 } else {
-
-&#x20;   // Order does not exist or is no longer pending
-
+    // The order was not found or was not pending
 }
-
 ```
 
+### Return Value
 
+-   `true`: The order was pending, its status was changed to `REJECTED`,
+    and its food stock was restored.
+-   `false`: The order was not found or was no longer pending.
 
-\### Processing Flow
+### Transaction Behavior
 
+The method is annotated with `@Transaction`.
 
+If restoring any food item's stock fails, the method throws an
+`IllegalStateException` with the message:
 
-The method performs the following operations:
-
-
-
-1\. Change the order status from `PENDING` to `REJECTED`.
-
-2\. Retrieve all order items associated with the order.
-
-3\. Restore the available quantity of each food item.
-
-4\. Return `true` if the operation succeeds.
-
-
-
-\### Return Value
-
-
-
-| Return value | Meaning |
-
-|---|---|
-
-| `true` | Order was successfully rejected and inventory was restored. |
-
-| `false` | The order was not pending or no matching order was updated. |
-
-
-
-\### Error Handling
-
-
-
-If inventory restoration fails, the method throws:
-
-
-
-```java
-
-IllegalStateException("Failed to restore food stock.");
-
+``` text
+Failed to restore food stock.
 ```
 
+The transaction is rolled back so that the status change and stock
+updates are not left partially applied.
 
+------------------------------------------------------------------------
 
-The transaction is rolled back, including the status change.
+## 12. Cancel an Order
 
+### Method
 
-
-\### When to Use
-
-
-
-Use this method when a Restaurant Manager rejects a customer's pending order.
-
-
-
-For example:
-
-\- Manager reviews a new order.
-
-\- Manager selects Reject.
-
-\- Order status changes to `REJECTED`.
-
-\- Previously reserved food quantities are returned to inventory.
-
-
-
-\*\*Important:\*\* Only orders with `PENDING` status can be rejected using this method.
-
-
-
-\---
-
-
-
-\## 4. Cancel an Order
-
-
-
-\### Method
-
-
-
-```java
-
-boolean cancelOrder(int orderId);
-
+``` java
+@Transaction
+default boolean cancelOrder(int orderId);
 ```
 
+### Purpose
 
+Cancels an order only if its current status is `PENDING`, then restores
+the stock of all food items associated with that order.
 
-\### Purpose
+### Process
 
+1.  Attempts to change the order status from `PENDING` to `CANCELLED`.
+2.  If no pending order is updated, returns `false`.
+3.  Retrieves the order items associated with the order.
+4.  Increases the available stock for each item.
+5.  Returns `true` if all operations succeed.
 
+### Example
 
-Cancels an existing pending order and restores the food quantities associated with that order.
-
-
-
-All operations are executed within a single transaction.
-
-
-
-\### Example
-
-
-
-```java
-
-boolean cancelled =
-
-&#x20;       orderTransactionDao.cancelOrder(orderId);
-
-
+``` java
+boolean cancelled = orderTransactionDao.cancelOrder(orderId);
 
 if (cancelled) {
-
-&#x20;   // Order cancelled successfully
-
+    // The order was cancelled and its stock was restored
 } else {
-
-&#x20;   // Order does not exist or is no longer pending
-
+    // The order was not found or was not pending
 }
-
 ```
 
+### Return Value
 
+-   `true`: The order was pending, its status was changed to
+    `CANCELLED`, and its food stock was restored.
+-   `false`: The order was not found or was no longer pending.
 
-\### Processing Flow
+### Transaction Behavior
 
+The method is annotated with `@Transaction`.
 
+If restoring any food item's stock fails, the method throws an
+`IllegalStateException` with the message:
 
-The method performs the following operations:
-
-
-
-1\. Change the order status from `PENDING` to `CANCELLED`.
-
-2\. Retrieve all order items associated with the order.
-
-3\. Restore the available quantity of each food item.
-
-4\. Return `true` if the operation succeeds.
-
-
-
-\### Return Value
-
-
-
-| Return value | Meaning |
-
-|---|---|
-
-| `true` | Order was successfully cancelled and inventory was restored. |
-
-| `false` | The order was not pending or no matching order was updated. |
-
-
-
-\### Error Handling
-
-
-
-If inventory restoration fails, the method throws:
-
-
-
-```java
-
-IllegalStateException("Failed to restore food stock.");
-
+``` text
+Failed to restore food stock.
 ```
 
+The transaction is rolled back so that the status change and stock
+updates are not left partially applied.
 
+------------------------------------------------------------------------
 
-The transaction is rolled back, including the status change.
+## 13. Important Implementation Notes
 
+### Why Use Transactions?
 
+A transaction groups multiple database operations into one unit of work.
 
-\### When to Use
+For the methods in this DAO, this is important because an order and its
+related stock changes must remain consistent.
 
+For example, when placing an order:
 
+-   The order should not be saved if its items cannot be inserted.
+-   The order should not be saved if the requested food stock is
+    unavailable.
+-   Stock should not be decreased without the corresponding order being
+    successfully placed.
 
-Use this method when a customer cancels an order that is still pending.
+Similarly, when rejecting or cancelling an order, the status change and
+stock restoration should succeed together.
 
+### Difference Between Status Update Methods
 
+This DAO contains two direct status update methods with different
+conditions:
 
-For example:
+  -----------------------------------------------------------------------
+  Method                              Condition
+  ----------------------------------- -----------------------------------
+  `setOrderStatus()`                  Updates the order by ID without
+                                      checking its current status.
 
-\- Customer opens Order Details.
+  `updatePendingOrderStatus()`        Updates the order only when its
+                                      current status is `PENDING`.
+  -----------------------------------------------------------------------
 
-\- Customer selects Cancel Order.
+Choose the method according to the operation's requirements.
 
-\- Application asks for confirmation.
+### Reminder Integration
 
-\- After confirmation, the order is cancelled and inventory is restored.
+The current active methods in this DAO do not insert records into the
+`Reminder` table.
 
+If a status change needs to create a customer reminder, that reminder
+insertion must be implemented separately or added to an appropriate
+transaction method.
 
+### Stock Quantity Checks
 
-\*\*Important:\*\* Only orders with `PENDING` status can be cancelled using this method.
+`decreaseAvailableQuantity()` prevents the available quantity from
+becoming negative by checking that enough stock exists before decreasing
+it.
 
+`increaseAvailableQuantity()` only checks that the food item exists and
+the quantity is greater than zero. It does not enforce a maximum stock
+quantity.
 
+### Threading
 
-\---
+The DAO methods execute synchronously. The current `AppDatabase`
+configuration uses `.allowMainThreadQueries()`, which permits database
+calls on the main UI thread in this project.
 
+However, database operations can block the UI. For a production
+application, database work should generally run on a background thread.
 
+### Related DAO
 
-\## 5. Order Processing Summary
+Use `OrderDao` for general order retrieval and updates.
 
+Use `OrderItemDao` for other operations involving order items and their
+food information.
 
-
-The following table summarizes how inventory and order status are handled.
-
-
-
-| Operation | Order Status | Inventory |
-
-|---|---|---|
-
-| Place order | `PENDING` | Decreased |
-
-| Accept order | `ACCEPTED` | No change |
-
-| Reject order | `REJECTED` | Restored |
-
-| Cancel order | `CANCELLED` | Restored |
-
-
-
-\### Order Lifecycle
-
-
-
-```text
-
-Customer places an order
-
-&#x20;         |
-
-&#x20;         v
-
-&#x20;      PENDING
-
-&#x20;         |
-
-&#x20;    +----+----+
-
-&#x20;    |         |
-
-&#x20;    v         v
-
-&#x20; ACCEPTED   REJECTED
-
-&#x20;    |         |
-
-&#x20;    v         v
-
-&#x20;  READY    Inventory
-
-&#x20;    |      restored
-
-&#x20;    v
-
-&#x20;PICKED\_UP
-
-```
-
-
-
-A customer can also cancel an order while its status is `PENDING`, in which case its status becomes `CANCELLED` and inventory is restored.
-
-
-
-\---
-
-
-
-\## 6. Important Implementation Notes
-
-
-
-\### Database Transactions
-
-
-
-The methods `placeOrder()`, `rejectOrder()`, and `cancelOrder()` use Room's `@Transaction` annotation.
-
-
-
-This ensures that related database operations are committed together or rolled back when an exception occurs.
-
-
-
-\### Preventing Duplicate Processing
-
-
-
-The order status is updated using the following condition:
-
-
-
-```sql
-
-WHERE order\_id = :orderId AND status = 'PENDING'
-
-```
-
-
-
-This ensures that only pending orders can be rejected or cancelled.
-
-
-
-If the order has already been accepted, rejected, or cancelled, the operation returns `false` without restoring inventory again.
-
-
-
-\### Inventory Management
-
-
-
-\- Inventory is decreased when an order is placed.
-
-\- Accepting an order does not change inventory.
-
-\- Rejecting an order restores inventory.
-
-\- Cancelling a pending order restores inventory.
-
-\- Inventory updates are performed within the transaction.
-
-
-
-\### Error Handling
-
-
-
-Callers should handle exceptions from transaction methods.
-
-
-
-For example:
-
-
-
-```java
-
-executor.execute(() -> {
-
-&#x20;   try {
-
-&#x20;       long orderId =
-
-&#x20;               orderTransactionDao.placeOrder(order, items);
-
-
-
-&#x20;       runOnUiThread(() -> {
-
-&#x20;           // Handle successful order placement
-
-&#x20;       });
-
-
-
-&#x20;   } catch (IllegalStateException e) {
-
-
-
-&#x20;       runOnUiThread(() -> {
-
-&#x20;           // Display an appropriate error message
-
-&#x20;       });
-
-&#x20;   }
-
-});
-
-```
-
-
-
-\### Background Thread Execution
-
-
-
-All DAO operations are synchronous.
-
-
-
-\*\*Do not call transaction methods directly on the main UI thread.\*\*
-
-
-
-Use a background thread, such as `ExecutorService`, when calling these methods from an Activity.
-
-
-
-\### Relationship with Other DAOs
-
-
-
-| DAO | Responsibility |
-
-|---|---|
-
-| `OrderDao` | Retrieve and update order information. |
-
-| `OrderItemDao` | Manage individual order items. |
-
-| `FoodItemDao` | Manage food item information and inventory. |
-
-| `OrderTransactionDao` | Coordinate multiple order and inventory operations within a transaction. |
-
-
-
-Use `OrderTransactionDao` whenever an operation requires multiple related database changes to succeed or fail together.
-
-
-
-
-
+`OrderTransactionDao` is specifically responsible for the multi-step
+order placement, rejection, cancellation, and stock-management
+operations described in this guide.
