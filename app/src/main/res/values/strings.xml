@@ -108,6 +108,12 @@
     <string name="order_reminders_heading">Reminders</string>
     <string name="order_cancel">Cancel order</string>
 
+    <string name="update_order_status_btn">Update Status</string>
+    <string name="order_accept_btn">Accept</string>
+    <string name="order_reject_btn">Reject</string>
+    <string name="select_status_spinner">Select Status</string>
+
+
     <!-- Order status values -->
     <string name="status_pending">Pending</string>
     <string name="status_accepted">Accepted</string>
