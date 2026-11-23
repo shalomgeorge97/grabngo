@@ -176,6 +176,84 @@
             android:textSize="14sp"
             tools:ignore="VisualLintTextFieldSize" />
 
+
+        <!-- Restaurant Manager-only fields -->
+        <LinearLayout
+            android:id="@+id/layoutManagerFields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txtRegisterRestaurantNameLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:labelFor="@id/edtRegisterRestaurantName"
+                android:text="@string/label_restaurant_name"
+                android:textColor="@color/grabngo_text"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/edtRegisterRestaurantName"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_input"
+                android:hint="@string/hint_restaurant_name"
+                android:inputType="textCapWords"
+                android:maxLines="1"
+                android:textColor="@color/grabngo_text"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txtRegisterRestaurantAddressLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:labelFor="@id/edtRegisterRestaurantAddress"
+                android:text="@string/label_restaurant_address"
+                android:textColor="@color/grabngo_text"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/edtRegisterRestaurantAddress"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_input"
+                android:hint="@string/hint_restaurant_address"
+                android:inputType="textPostalAddress|textCapSentences"
+                android:maxLines="1"
+                android:textColor="@color/grabngo_text"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txtRegisterRestaurantCityLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:labelFor="@id/edtRegisterRestaurantCity"
+                android:text="@string/label_city"
+                android:textColor="@color/grabngo_text"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/edtRegisterRestaurantCity"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_input"
+                android:hint="@string/hint_city"
+                android:inputType="textCapWords"
+                android:maxLines="1"
+                android:textColor="@color/grabngo_text"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+
         <Button
             android:id="@+id/btnRegisterUploadPhoto"
             android:layout_width="match_parent"

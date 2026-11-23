@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.grabngo.database.AppDatabase;
 import com.example.grabngo.entity.User;
 import com.example.grabngo.util.SessionManager;
+import com.example.grabngo.util.PasswordHasher;
 
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -94,9 +95,16 @@ public class Login extends AppCompatActivity {
             final Exception loginError = databaseError;
 
             final boolean passwordMatches =
-                    user != null
-                            && user.getPassword() != null
-                            && user.getPassword().equals(password);
+                    authenticatedUser != null
+                            && authenticatedUser.getPassword() != null
+                            && (
+                            PasswordHasher.isHashed(authenticatedUser.getPassword())
+                                    ? PasswordHasher.verify(
+                                    password,
+                                    authenticatedUser.getPassword()
+                            )
+                                    : authenticatedUser.getPassword().equals(password)
+                    );
 
             boolean sessionSaved = false;
             String role = "";

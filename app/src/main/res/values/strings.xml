@@ -27,6 +27,15 @@
     <string name="register_upload_photo">Upload photo (optional)</string>
     <string name="register_login_link">Already have an account? Login</string>
 
+    <string name="label_restaurant_name">Restaurant Name</string>
+    <string name="label_restaurant_address">Restaurant Address</string>
+    <string name="label_city">City</string>
+
+    <string name="hint_restaurant_name">Enter restaurant name</string>
+    <string name="hint_restaurant_address">Enter restaurant street address</string>
+    <string name="hint_city">Enter restaurant city</string>
+
+
     <!-- Login screen -->
     <string name="login_title">Welcome back</string>
     <string name="login_subtitle">Log in to your GrabNGo account</string>
