@@ -77,6 +77,7 @@
     </plurals>
     <string name="restaurant_address_format">%1$s, %2$s</string>
 
+
     <!-- Restaurant Details (#13) -->
     <string name="details_title">Restaurant</string>
     <string name="details_search_hint">Search food</string>

@@ -72,13 +72,28 @@
             android:text="@string/home_restaurants_heading"
             android:textAppearance="@style/TextAppearance.GrabNGo.Heading" />
 
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="48dp"
+            android:text="@string/home_no_results"
+            android:textAppearance="@style/TextAppearance.GrabNGo.Body"
+            android:textColor="@color/text_secondary"
+            android:visibility="gone" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvRestaurants"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             tools:ignore="NestedWeights" />
+
+
     </LinearLayout>
+
+
 
 <!--     Bottom navigation (add after the menu file exists) -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
