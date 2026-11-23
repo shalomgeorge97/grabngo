@@ -49,18 +49,17 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
-            android:fillViewport="true"
+            android:fillViewport="false"
             android:scrollbars="none">
 
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/filterToggleGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
-                app:checkedButton="@id/btnPending"
+                android:layout_gravity="start|center_vertical"
+                app:checkedButton="@id/btnAll"
                 app:selectionRequired="true"
                 app:singleSelection="true">
-
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAll"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -119,14 +118,33 @@
                     tools:ignore="TouchTargetSizeCheck" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnReady"
+                    android:id="@+id/btnRejected"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:layout_marginEnd="8dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="84dp"
+                    android:text="@string/status_rejected"
+                    android:textAllCaps="false"
+                    android:textColor="#1F2937"
+                    android:textSize="14sp"
+                    app:backgroundTint="@color/selector_filter_bg"
+                    app:cornerRadius="12dp"
+                    app:strokeColor="@color/selector_filter_stroke"
+                    app:strokeWidth="1.5dp"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCompleted"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="44dp"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
-                    android:minWidth="76dp"
-                    android:text="@string/order_filter_ready"
+                    android:minWidth="92dp"
+                    android:text="@string/status_completed"
                     android:textAllCaps="false"
                     android:textColor="#1F2937"
                     android:textSize="14sp"

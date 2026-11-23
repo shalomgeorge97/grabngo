@@ -259,6 +259,36 @@ public abstract class AppDatabase extends RoomDatabase {
                 null
         ));
 
+        orderDao().addOrder(new Order(
+                4,
+                1,
+                "2026-11-22 10:06",
+                OrderStatus.FULFILLMENT_DELIVERY,
+                OrderStatus.REJECTED,
+                16.00,
+                null
+        ));
+
+        orderDao().addOrder(new Order(
+                4,
+                1,
+                "2026-11-22 10:06",
+                OrderStatus.FULFILLMENT_DELIVERY,
+                OrderStatus.DELIVERED,
+                16.00,
+                null
+        ));
+
+        orderDao().addOrder(new Order(
+                4,
+                1,
+                "2026-11-22 10:06",
+                OrderStatus.FULFILLMENT_DELIVERY,
+                OrderStatus.PICKED_UP,
+                16.00,
+                null
+        ));
+
         preferences.edit()
                 .putBoolean("is_seeded", true)
                 .apply();
