@@ -207,7 +207,7 @@ public class Payment extends AppCompatActivity {
 
                 runOnUiThread(() -> {
                     Toast.makeText(this, R.string.checkout_order_placed, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(Payment.this, OrderDetails.class);
+                    Intent intent = new Intent(Payment.this, CustomerOrderDetails.class);
                     intent.putExtra("order_id", (int) orderId);
                     startActivity(intent);
                     finish();
