@@ -31,6 +31,7 @@ public class ReminderActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_reminders);
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
         ViewCompat.setOnApplyWindowInsetsListener(
                 findViewById(R.id.main),
