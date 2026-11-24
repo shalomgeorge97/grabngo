@@ -66,8 +66,10 @@
         android:textSize="14sp"
         android:textStyle="bold" />
 
-    <!-- Rows are added by OrderItemAdapter; wrap_content keeps all rows visible with no
-         internal scrolling (orders have few items). -->
+    <!-- Rows are added by OrderItemAdapter
+         wrap_content keeps all rows visible with no
+         internal scrolling (orders have few items)
+    -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvItems"
         android:layout_width="match_parent"

@@ -116,9 +116,14 @@ public class CustomerOrderDetails extends AppCompatActivity {
     }
 
     private void showOrder(Order order, String restaurantName) {
-        ((TextView) findViewById(R.id.tvOrderId)).setText(
-                String.format(Locale.getDefault(), "Order #%d", order.getOrderId()));
-        ((TextView) findViewById(R.id.tvStatusBadge)).setText(order.getStatus());
+        TextView tvOrderId, tvStatusBadge, tvPartyInfo, tvTotalAmount;
+        tvOrderId = findViewById(R.id.tvOrderId);
+        tvStatusBadge = findViewById(R.id.tvStatusBadge);
+        tvPartyInfo = findViewById(R.id.tvPartyInfo);
+        tvTotalAmount = findViewById(R.id.tvTotalAmount);
+
+        tvOrderId.setText(String.format(Locale.getDefault(), "Order #%d", order.getOrderId()));
+        tvStatusBadge.setText(order.getStatus());
 
         List<String> parts = new ArrayList<>();
         if (!restaurantName.isEmpty()) parts.add(restaurantName);
@@ -126,10 +131,8 @@ public class CustomerOrderDetails extends AppCompatActivity {
         parts.add(order.getOrderDate());
         String address = order.getDeliveryAddress();
         if (address != null && !address.trim().isEmpty()) parts.add(address.trim());
-        ((TextView) findViewById(R.id.tvPartyInfo)).setText(String.join("  |  ", parts));
-
-        ((TextView) findViewById(R.id.tvTotalAmount)).setText(
-                String.format(Locale.getDefault(), "$%.2f", order.getTotalAmount()));
+        tvPartyInfo.setText(String.join("  |  ", parts));
+        tvTotalAmount.setText(String.format(Locale.getDefault(), "$%.2f", order.getTotalAmount()));
     }
 
     private void showItems(List<OrderItemDetails> details) {

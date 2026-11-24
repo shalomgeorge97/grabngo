@@ -18,6 +18,7 @@
     <string name="food_edit_time_hint">Select</string>
     <string name="food_edit_ingredients">Ingredients and allergens</string>
     <string name="food_edit_ingredients_hint">e.g. wheat, milk, nuts</string>
-    <string name="food_edit_save">Save</string>
+    <string name="food_add_save">Save</string>
+    <string name="food_edit_update">Update</string>
     <string name="food_edit_delete">Delete</string>
 </resources>
