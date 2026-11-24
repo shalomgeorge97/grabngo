@@ -95,7 +95,7 @@ public class AddEditFood extends AppCompatActivity {
     // Initialize views
     private void initializeViews() {
 
-        titleDisplay = findViewById(R.id.titleDisplay);
+        titleDisplay = findViewById(R.id.tvTitleDisplay);
 
         etName = findViewById(R.id.etName);
         etDescription = findViewById(R.id.etDescription);
@@ -113,6 +113,7 @@ public class AddEditFood extends AppCompatActivity {
         tilQuantity = findViewById(R.id.tilQuantity);
 
         btnSave = findViewById(R.id.btnSave);
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
     }
 
     // Setup category dropdown
@@ -141,15 +142,15 @@ public class AddEditFood extends AppCompatActivity {
 
         if (isEditMode) {
 
-            titleDisplay.setText("Edit Food");
-            btnSave.setText("Update Food");
+            titleDisplay.setText(R.string.food_edit_title);
+            btnSave.setText(R.string.food_edit_update);
 
             loadFoodItem();
 
         } else {
 
-            titleDisplay.setText("Add Food");
-            btnSave.setText("Save Food");
+            titleDisplay.setText(R.string.food_add_title);
+            btnSave.setText(R.string.food_add_save);
 
             if (restaurantId == -1) {
                 Toast.makeText(this,

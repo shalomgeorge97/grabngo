@@ -103,6 +103,7 @@ public class OrderDetails extends AppCompatActivity {
         btnAccept = findViewById(R.id.btnAccept);
         btnReject = findViewById(R.id.btnReject);
         btnUpdateStatus = findViewById(R.id.btnUpdateStatus);
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
     }
 
     private void setupRecyclerView() {
