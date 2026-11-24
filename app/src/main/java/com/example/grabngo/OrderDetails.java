@@ -53,10 +53,11 @@ public class OrderDetails extends AppCompatActivity {
     private Spinner spStatus;
     private Button btnAccept;
     private Button btnReject;
-    private Button btnSendReminder;
+    private Button btnUpdateStatus;
 
     private int orderId;
     private Order currentOrder;
+    private String selectedStatus;
     private List<String> spinnerOptions = new ArrayList<>();
     private boolean isBindingSpinner = false;
     private boolean isMutating = false;
@@ -101,7 +102,7 @@ public class OrderDetails extends AppCompatActivity {
         spStatus = findViewById(R.id.spStatus);
         btnAccept = findViewById(R.id.btnAccept);
         btnReject = findViewById(R.id.btnReject);
-        btnSendReminder = findViewById(R.id.btnSendReminder);
+        btnUpdateStatus = findViewById(R.id.btnUpdateStatus);
     }
 
     private void setupRecyclerView() {
@@ -140,6 +141,8 @@ public class OrderDetails extends AppCompatActivity {
                     return;
                 }
                 if (position <= 0) {
+                    selectedStatus = null;
+                    btnUpdateStatus.setEnabled(false);
                     return;
                 }
                 int optionIndex = position - 1;
@@ -155,33 +158,21 @@ public class OrderDetails extends AppCompatActivity {
                     bindActionControls(currentOrder);
                     return;
                 }
-                applyStatusTransition(targetStatus, false);
+                selectedStatus = targetStatus;
+                btnUpdateStatus.setEnabled(true);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
 
-        btnSendReminder.setOnClickListener(v -> {
-            if (currentOrder == null) {
+        btnUpdateStatus.setOnClickListener(v -> {
+            if (currentOrder == null || isMutating || selectedStatus == null) {
                 return;
             }
 
             // >>> START: Ami's implementation - Reminder functionality
-            String status = currentOrder.getStatus();
-            if (!OrderStatus.READY.equals(status)
-                    && !OrderStatus.PICKED_UP.equals(status)
-                    && !OrderStatus.DELIVERED.equals(status)) {
-                return;
-            }
-
-            int targetOrderId = currentOrder.getOrderId();
-            try {
-                db.reminderDao().createStatusReminder(targetOrderId, status);
-                Toast.makeText(this, "Reminder sent.", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Toast.makeText(this, "Failed to send reminder.", Toast.LENGTH_SHORT).show();
-            }
+            applyStatusTransition(selectedStatus, false);
             // <<< END: Ami's implementation
         });
     }
@@ -250,23 +241,13 @@ public class OrderDetails extends AppCompatActivity {
                     if (restoreStock) {
                         restoreStockForOrder(targetOrderId);
                     }
+
+                    // >>> START: Ami's implementation - Reminder functionality
+                    // Save the reminder with the status update in this transaction.
+                    db.reminderDao().createStatusReminder(targetOrderId, targetStatus);
+                    // <<< END: Ami's implementation
                     return true;
                 });
-
-                // >>> START: Ami's implementation - Reminder functionality
-                boolean reminderSaved = true;
-
-                if (updated && (OrderStatus.ACCEPTED.equals(targetStatus)
-                        || OrderStatus.REJECTED.equals(targetStatus))) {
-                    try {
-                        db.reminderDao().createStatusReminder(targetOrderId, targetStatus);
-                    } catch (Exception reminderException) {
-                        reminderSaved = false;
-                    }
-                }
-
-                final boolean reminderWasSaved = reminderSaved;
-                // <<< END: Ami's implementation
 
                 Order refreshedOrder = orderDao.getOrderById(targetOrderId);
                 List<OrderItemDetails> refreshedItems = refreshedOrder != null
@@ -293,14 +274,7 @@ public class OrderDetails extends AppCompatActivity {
                     renderOrderItems(refreshedItems);
                     bindActionControls(refreshedOrder);
                     setActionsEnabled(true);
-
-                    // >>> START: Ami's implementation - Reminder functionality
-                    String resultMessage = "Order updated to " + targetStatus + ".";
-                    if (!reminderWasSaved) {
-                        resultMessage += " Reminder could not be saved.";
-                    }
-                    Toast.makeText(this, resultMessage, Toast.LENGTH_SHORT).show();
-                    // <<< END: Ami's implementation
+                    Toast.makeText(this, "Order updated to " + targetStatus + ".", Toast.LENGTH_SHORT).show();
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {
@@ -389,6 +363,7 @@ public class OrderDetails extends AppCompatActivity {
 
     private void bindActionControls(Order order) {
         String status = order.getStatus();
+        selectedStatus = null;
         boolean canAcceptOrReject = OrderStatus.canManagerAcceptOrReject(status);
         acceptRejectRow.setVisibility(canAcceptOrReject ? View.VISIBLE : View.GONE);
 
@@ -406,8 +381,11 @@ public class OrderDetails extends AppCompatActivity {
 
         if (spinnerOptions.isEmpty() || OrderStatus.isFinal(status)) {
             updateStatusRow.setVisibility(View.GONE);
+            btnUpdateStatus.setVisibility(View.GONE);
         } else {
             updateStatusRow.setVisibility(View.VISIBLE);
+            btnUpdateStatus.setVisibility(View.VISIBLE);
+            btnUpdateStatus.setEnabled(false);
             isBindingSpinner = true;
 
             List<String> displayOptions = new ArrayList<>();
@@ -425,15 +403,14 @@ public class OrderDetails extends AppCompatActivity {
             spStatus.post(() -> isBindingSpinner = false);
         }
 
-        boolean canRemind = OrderStatus.ACCEPTED.equals(status) || OrderStatus.READY.equals(status);
-        btnSendReminder.setVisibility(canRemind ? View.VISIBLE : View.GONE);
     }
 
     private void setActionsEnabled(boolean enabled) {
         btnAccept.setEnabled(enabled);
         btnReject.setEnabled(enabled);
         spStatus.setEnabled(enabled);
-        btnSendReminder.setEnabled(enabled);
+        //check if targeted status is selected in spinner
+        btnUpdateStatus.setEnabled(enabled && selectedStatus != null);
     }
 
     private void setTextIfPresent(int viewId, String value) {

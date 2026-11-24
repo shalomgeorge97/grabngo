@@ -99,7 +99,7 @@
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSendReminder"
+            android:id="@+id/btnUpdateStatus"
             style="@style/Widget.GrabNGo.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
