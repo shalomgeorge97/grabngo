@@ -254,19 +254,6 @@
         </LinearLayout>
 
 
-        <Button
-            android:id="@+id/btnRegisterUploadPhoto"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="14dp"
-            android:background="@color/primary_dark"
-            android:backgroundTint="@null"
-            android:stateListAnimator="@null"
-            android:text="@string/register_upload_photo"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            tools:ignore="VisualLintButtonSize,TextContrastCheck" />
 
         <Button
             android:id="@+id/btnRegister"
