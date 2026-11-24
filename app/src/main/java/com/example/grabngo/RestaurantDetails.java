@@ -188,10 +188,6 @@ public class RestaurantDetails extends AppCompatActivity {
     }
 
     private void loadRestaurant() {
-        if (USE_DUMMY_DATA) {
-            handleRestaurantResult(DummyData.getRestaurantById(restaurantId));
-            return;
-        }
 
         executor.execute(() -> {
             Restaurant restaurant = db.restaurantDao().getRestaurantById(restaurantId);
@@ -212,12 +208,6 @@ public class RestaurantDetails extends AppCompatActivity {
     }
 
     private void loadFoodItems(String keyword) {
-        if (USE_DUMMY_DATA) {
-            List<FoodItem> foods = DummyData.getFoodItems(restaurantId, keyword);
-            adapter.setItems(foods != null ? foods : new ArrayList<>());
-            updateReserveState(foods);
-            return;
-        }
 
         executor.execute(() -> {
             List<FoodItem> foods;
