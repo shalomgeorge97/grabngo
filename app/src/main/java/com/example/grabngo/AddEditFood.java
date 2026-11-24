@@ -1,7 +1,7 @@
-
 package com.example.grabngo;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,6 +23,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -301,6 +303,15 @@ public class AddEditFood extends AppCompatActivity {
         return editText.getText().toString().trim();
     }
 
+    // Return to FoodList screen
+    private void goToFoodList() {
+        Intent intent = new Intent(AddEditFood.this, FoodList.class);
+        intent.putExtra("restaurantId", restaurantId);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
+    }
+
     // Save or update food item
     private void saveFoodItem() {
 
@@ -323,19 +334,24 @@ public class AddEditFood extends AppCompatActivity {
         if (!isEditMode) {
 
             // Add new food item
-            FoodItem food = new FoodItem(
-                    restaurantId,
-                    name,
-                    description,
-                    category,
-                    ingredients,
-                    originalPrice,
-                    discountedPrice,
-                    quantity,
-                    java.time.LocalDateTime.now()
-                            .format(java.time.format.DateTimeFormatter
-                                    .ofPattern("yyyy-MM-dd HH:mm"))
-            );
+            FoodItem food;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                food = new FoodItem(
+                        restaurantId,
+                        name,
+                        description,
+                        category,
+                        ingredients,
+                        originalPrice,
+                        discountedPrice,
+                        quantity,
+                        LocalDateTime.now()
+                                .format(DateTimeFormatter
+                                        .ofPattern("yyyy-MM-dd HH:mm"))
+                );
+            } else {
+                food = null;
+            }
 
             executor.execute(() -> {
 
@@ -347,7 +363,7 @@ public class AddEditFood extends AppCompatActivity {
                             "Food added successfully",
                             Toast.LENGTH_SHORT).show();
 
-//                    finish();
+                    goToFoodList();
                 });
             });
 
@@ -383,9 +399,8 @@ public class AddEditFood extends AppCompatActivity {
                     Toast.makeText(this,
                             "Food updated successfully",
                             Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(AddEditFood.this, FoodList.class));
 
-//                    finish();
+                    goToFoodList();
                 });
             });
         }
@@ -401,7 +416,6 @@ public class AddEditFood extends AppCompatActivity {
                 .setPositiveButton("Delete", (dialog, which) ->
                         deleteFoodItem())
                 .show();
-        startActivity(new Intent(AddEditFood.this, FoodList.class));
     }
 
     // Delete food item
@@ -428,7 +442,8 @@ public class AddEditFood extends AppCompatActivity {
                 Toast.makeText(this,
                         "Food deleted successfully",
                         Toast.LENGTH_SHORT).show();
-//                    startActivity(new Intent(AddEditFood.this, FoodList.class));
+
+                goToFoodList();
             });
         });
     }
