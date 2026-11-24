@@ -1,8 +1,10 @@
+//implemented by Ami
 package com.example.grabngo.database;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -21,6 +23,9 @@ import com.example.grabngo.entity.Reminder;
 import com.example.grabngo.entity.Restaurant;
 import com.example.grabngo.entity.User;
 import com.example.grabngo.util.OrderStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Database(
@@ -239,7 +244,7 @@ public abstract class AppDatabase extends RoomDatabase {
         ));
 
 
-        orderDao().addOrder(new Order(
+        long orderId1 = orderDao().addOrder(new Order(
                 4,
                 1,
                 "2026-11-22 10:06",
@@ -249,7 +254,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 null
         ));
 
-        orderDao().addOrder(new Order(
+        long orderId2 = orderDao().addOrder(new Order(
                 4,
                 1,
                 "2026-11-22 10:06",
@@ -259,7 +264,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 null
         ));
 
-        orderDao().addOrder(new Order(
+        long orderId3 = orderDao().addOrder(new Order(
                 4,
                 1,
                 "2026-11-22 10:06",
@@ -269,7 +274,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 null
         ));
 
-        orderDao().addOrder(new Order(
+        long orderId4 = orderDao().addOrder(new Order(
                 4,
                 1,
                 "2026-11-22 10:06",
@@ -279,7 +284,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 null
         ));
 
-        orderDao().addOrder(new Order(
+        long orderId5 = orderDao().addOrder(new Order(
                 4,
                 1,
                 "2026-11-22 10:06",
@@ -288,6 +293,21 @@ public abstract class AppDatabase extends RoomDatabase {
                 16.00,
                 null
         ));
+
+        List<OrderItem> seedOrderItems = new ArrayList<>();
+        seedOrderItems.add(new OrderItem((int) orderId1, 1, 2, 8.00));
+        seedOrderItems.add(new OrderItem((int) orderId2, 1, 2, 8.00));
+        seedOrderItems.add(new OrderItem((int) orderId3, 1, 2, 8.00));
+        seedOrderItems.add(new OrderItem((int) orderId4, 1, 2, 8.00));
+        seedOrderItems.add(new OrderItem((int) orderId5, 1, 2, 8.00));
+
+        orderTransactionDao().addOrderItems(seedOrderItems);
+
+        reminderDao().addReminder(new Reminder(
+                1,
+        "Ready",
+        "Your order is ready!",
+                "2026-11-22 10:06"));
 
         preferences.edit()
                 .putBoolean("is_seeded", true)
