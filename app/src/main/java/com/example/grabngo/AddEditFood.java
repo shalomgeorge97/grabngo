@@ -46,7 +46,7 @@ public class AddEditFood extends AppCompatActivity {
             tilOriginalPrice, tilDiscountedPrice, tilQuantity;
 
     private TextView titleDisplay;
-    private MaterialButton btnSave, btnDelete;
+    private MaterialButton btnSave;
 
     // Food information
     private int foodId = -1;
@@ -90,8 +90,6 @@ public class AddEditFood extends AppCompatActivity {
         setupScreen();
 
         btnSave.setOnClickListener(v -> saveFoodItem());
-
-        btnDelete.setOnClickListener(v -> confirmDelete());
     }
 
     // Initialize views
@@ -115,7 +113,6 @@ public class AddEditFood extends AppCompatActivity {
         tilQuantity = findViewById(R.id.tilQuantity);
 
         btnSave = findViewById(R.id.btnSave);
-        btnDelete = findViewById(R.id.btnDelete);
     }
 
     // Setup category dropdown
@@ -126,7 +123,8 @@ public class AddEditFood extends AppCompatActivity {
                 "Meals",
                 "Desserts",
                 "Beverages",
-                "Snacks"
+                "Snacks",
+                "Others"
         };
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -145,7 +143,6 @@ public class AddEditFood extends AppCompatActivity {
 
             titleDisplay.setText("Edit Food");
             btnSave.setText("Update Food");
-            btnDelete.setVisibility(View.VISIBLE);
 
             loadFoodItem();
 
@@ -153,7 +150,6 @@ public class AddEditFood extends AppCompatActivity {
 
             titleDisplay.setText("Add Food");
             btnSave.setText("Save Food");
-            btnDelete.setVisibility(View.GONE);
 
             if (restaurantId == -1) {
                 Toast.makeText(this,
