@@ -201,7 +201,17 @@ public class Profile extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        BottomNavigationView bottomNav =
+                findViewById(R.id.bottomNav);
+
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_profile);
+        }
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

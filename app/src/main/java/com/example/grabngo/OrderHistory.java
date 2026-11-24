@@ -23,6 +23,7 @@ import java.util.Map;
 
 import com.example.grabngo.database.AppDatabase;
 import com.example.grabngo.util.SessionManager;
+import com.example.grabngo.util.BottomNavigationHelper;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -40,7 +41,12 @@ public class OrderHistory extends AppCompatActivity {
         setContentView(R.layout.activity_order_history);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(
+                    systemBars.left,
+                    systemBars.top,
+                    systemBars.right,
+                    0
+            );
             return insets;
         });
 
@@ -96,7 +102,15 @@ public class OrderHistory extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadOrders(); // refresh after placing or cancelling an order
+
+        BottomNavigationView bottomNav =
+                findViewById(R.id.bottomNav);
+
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_orders);
+        }
+
+        loadOrders();
     }
 
     // Shows a message instead of an empty screen when there are no orders
@@ -106,20 +120,15 @@ public class OrderHistory extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
-        bottomNav.setSelectedItemId(R.id.nav_orders);
 
-        bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_home) {
-                startActivity(new Intent(OrderHistory.this, Home.class));
-                return true;
-            } else if (id == R.id.nav_profile) {
-                startActivity(new Intent(OrderHistory.this, Profile.class));
-                return true;
-            }
-            return true; // Orders: stay on this screen
-        });
+        BottomNavigationView bottomNav =
+                findViewById(R.id.bottomNav);
+
+        BottomNavigationHelper.configure(
+                this,
+                bottomNav,
+                R.id.nav_orders
+        );
     }
 
     // Temporary test data only, so the design can be checked

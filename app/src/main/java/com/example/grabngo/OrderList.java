@@ -21,6 +21,7 @@ import com.example.grabngo.database.AppDatabase;
 import com.example.grabngo.entity.CustomerOrder;
 import com.example.grabngo.util.OrderStatus;
 import com.example.grabngo.util.SessionManager;
+import com.example.grabngo.util.BottomNavigationHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 
@@ -56,7 +57,12 @@ public class OrderList extends AppCompatActivity {
         setContentView(R.layout.activity_order_list);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(
+                    systemBars.left,
+                    systemBars.top,
+                    systemBars.right,
+                    0
+            );
             return insets;
         });
 
@@ -75,6 +81,14 @@ public class OrderList extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        BottomNavigationView bottomNav =
+                findViewById(R.id.bottomNav);
+
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_orders);
+        }
+
         if (hasLoadedOnce) {
             loadOrdersFromDatabase();
         }
@@ -233,20 +247,15 @@ public class OrderList extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
-        bottomNav.setSelectedItemId(R.id.nav_orders);
 
-        bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_home) {
-                startActivity(new Intent(OrderList.this, Home.class));
-                return true;
-            } else if (id == R.id.nav_profile) {
-                startActivity(new Intent(OrderList.this, Profile.class));
-                return true;
-            }
-            return true;
-        });
+        BottomNavigationView bottomNav =
+                findViewById(R.id.bottomNav);
+
+        BottomNavigationHelper.configure(
+                this,
+                bottomNav,
+                R.id.nav_orders
+        );
     }
 
     @Override
