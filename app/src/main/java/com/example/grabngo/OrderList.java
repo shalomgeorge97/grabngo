@@ -17,8 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.grabngo.dao.OrderDao;
+import com.example.grabngo.dao.RestaurantDao;
 import com.example.grabngo.database.AppDatabase;
 import com.example.grabngo.entity.CustomerOrder;
+import com.example.grabngo.entity.Restaurant;
 import com.example.grabngo.util.OrderStatus;
 import com.example.grabngo.util.SessionManager;
 import com.example.grabngo.util.BottomNavigationHelper;
@@ -33,13 +35,14 @@ import java.util.concurrent.Executors;
 
 public class OrderList extends AppCompatActivity {
 
-    private static final int DEFAULT_RESTAURANT_ID = 1;
+    private static final int DEFAULT_RESTAURANT_ID = -1;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final List<CustomerOrder> allOrders = new ArrayList<>();
 
     private AppDatabase db;
     private OrderDao orderDao;
+    private RestaurantDao restaurantDao;
     private SessionManager sessionManager;
 
     private OrderAdapter adapter;
@@ -49,6 +52,7 @@ public class OrderList extends AppCompatActivity {
     private int activeFilterButtonId = R.id.btnPending;
     private String searchQuery = "";
     private boolean hasLoadedOnce = false;
+    private int restaurantId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +72,7 @@ public class OrderList extends AppCompatActivity {
 
         db = AppDatabase.getDatabase(this);
         orderDao = db.orderDao();
+        restaurantDao = db.restaurantDao();
         sessionManager = new SessionManager(this);
 
         bindViews();
@@ -143,7 +148,7 @@ public class OrderList extends AppCompatActivity {
     private void loadOrdersFromDatabase() {
         executor.execute(() -> {
             try {
-                int restaurantId = resolveRestaurantId();
+                resolveRestaurantId();
                 List<CustomerOrder> loaded = orderDao.getCustomerOrdersByRestaurantId(restaurantId);
 
                 runOnUiThread(() -> {
@@ -171,18 +176,17 @@ public class OrderList extends AppCompatActivity {
         });
     }
 
-    private int resolveRestaurantId() {
-        int extraRestaurantId = getIntent().getIntExtra("restaurant_id", -1);
-        if (extraRestaurantId > 0) {
-            return extraRestaurantId;
+    private void resolveRestaurantId() {
+        try {
+            Restaurant restaurant = restaurantDao.getRestaurantByManagerId(sessionManager.getUserId());
+            if (restaurant != null){
+                restaurantId = restaurant.getRestaurantId();
+            } else {
+                restaurantId = DEFAULT_RESTAURANT_ID;
+            }
+        } catch (Exception e) {
+            finish();
         }
-        // If your Restaurant entity/DAO links a manager userId to a restaurantId, query it here;
-        // otherwise use the seeded restaurant ID for testing.
-        if (sessionManager.hasActiveSession()
-                && SessionManager.ROLE_MANAGER.equals(sessionManager.getUserRole())) {
-            return DEFAULT_RESTAURANT_ID;
-        }
-        return DEFAULT_RESTAURANT_ID;
     }
 
     private void applyFilters() {
