@@ -24,7 +24,6 @@
     <string name="register_role_prompt">I am a</string>
     <string name="role_customer">Customer</string>
     <string name="role_manager">Restaurant Manager</string>
-    <string name="register_upload_photo">Upload photo (optional)</string>
     <string name="register_login_link">Already have an account? Login</string>
 
     <string name="label_restaurant_name">Restaurant Name</string>

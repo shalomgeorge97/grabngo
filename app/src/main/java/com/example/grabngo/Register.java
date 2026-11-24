@@ -65,8 +65,6 @@ public class Register extends Activity {
         edtRestaurantCity =
                 findViewById(R.id.edtRegisterRestaurantCity);
 
-        Button btnUploadPhoto =
-                findViewById(R.id.btnRegisterUploadPhoto);
 
         btnRegister = findViewById(R.id.btnRegister);
 
@@ -80,11 +78,6 @@ public class Register extends Activity {
 
         btnManagerRole.setOnClickListener(v ->
                 updateRoleSelection(false));
-
-        btnUploadPhoto.setOnClickListener(v ->
-                Toast.makeText(this,
-                        "Photo upload will be added next.",
-                        Toast.LENGTH_SHORT).show());
 
         btnRegister.setOnClickListener(v ->
                 validateRegistration());
