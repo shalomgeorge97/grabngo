@@ -183,6 +183,6 @@
         android:background="@color/surface"
         app:itemIconTint="@color/bottom_nav_tint"
         app:itemTextColor="@color/bottom_nav_tint"
-        app:menu="@menu/menu_customer_bottom_nav" />
+        app:menu="@menu/menu_manager_bottom_nav" />
 
 </LinearLayout>

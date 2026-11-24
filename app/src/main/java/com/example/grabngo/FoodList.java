@@ -98,6 +98,16 @@ public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoo
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Keep the Food tab selected when returning to this screen.
+        BottomNavigationView bottomNav =
+                findViewById(R.id.bottomNav);
+
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_food);
+        }
+
+        // Refresh the food list.
         if (restaurantId != -1) {
             reloadFoods();
         }
