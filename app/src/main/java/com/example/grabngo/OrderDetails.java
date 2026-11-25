@@ -90,6 +90,7 @@ public class OrderDetails extends AppCompatActivity {
         db = AppDatabase.getDatabase(this);
         orderDao = db.orderDao();
         orderItemDao = db.orderItemDao();
+        orderTransactionDao = db.orderTransactionDao();
 
         bindViews();
         setupRecyclerView();
@@ -315,7 +316,7 @@ public class OrderDetails extends AppCompatActivity {
     }
 
     private void restoreStockForOrder(int targetOrderId) {
-        List<OrderItem> items = orderItemDao.getOrderItemsByOrderId(targetOrderId);
+        List<OrderItem> items = orderTransactionDao.getOrderItemsByOrderId(targetOrderId);
         if (items == null || items.isEmpty()) {
             return;
         }
