@@ -86,7 +86,8 @@
             android:text="Reminders"
             android:textColor="@color/text_primary"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
         <!-- Rows added in code; the placeholder below is swapped out once reminders load -->
         <LinearLayout
@@ -94,7 +95,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tvNoReminders"
@@ -102,7 +104,8 @@
                 android:layout_height="wrap_content"
                 android:text="No reminders yet"
                 android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
 
