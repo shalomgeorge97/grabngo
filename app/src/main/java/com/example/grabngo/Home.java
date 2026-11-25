@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.grabngo.entity.FoodItem;
 import com.example.grabngo.entity.Restaurant;
 import com.example.grabngo.database.AppDatabase;
 import com.example.grabngo.util.BottomNavigationHelper;
@@ -122,8 +123,13 @@ public class Home extends AppCompatActivity {
             List<Restaurant> restaurants = db.restaurantDao().getAllRestaurants();
             Map<Integer, Integer> counts = new HashMap<>();
             for (Restaurant r : restaurants) {
-                counts.put(r.getRestaurantId(),
-                        db.foodItemDao().getFoodItemsByRestaurantId(r.getRestaurantId()).size());
+                int available = 0;
+                for (FoodItem f : db.foodItemDao().getFoodItemsByRestaurantId(r.getRestaurantId())) {
+                    if (f.getAvailableQuantity() > 0) {
+                        available++;
+                    }
+                }
+                counts.put(r.getRestaurantId(), available);
             }
             runOnUiThread(() -> {
                 allRestaurants.clear();
@@ -141,7 +147,10 @@ public class Home extends AppCompatActivity {
         for (Restaurant r : allRestaurants) {
             String name = r.getRestaurantName() == null ? "" : r.getRestaurantName().toLowerCase();
             String city = r.getCity() == null ? "" : r.getCity().toLowerCase();
-            if (searchText.isEmpty() || name.contains(searchText) || city.contains(searchText)) {
+            String address = r.getAddress() == null ? "" : r.getAddress().toLowerCase();
+            if (searchText.isEmpty() || name.contains(searchText)
+                    || city.contains(searchText)
+                    || address.contains(searchText)) {
                 restaurantList.add(r);
             }
         }
