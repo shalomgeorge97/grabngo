@@ -14,8 +14,7 @@ import com.example.grabngo.entity.Reminder;
 
 import java.util.List;
 
-public class ReminderAdapter
-        extends RecyclerView.Adapter<ReminderAdapter.ViewHolder> {
+public class ReminderAdapter extends RecyclerView.Adapter {
 
     private final List<Reminder> list;
     private final LayoutInflater layoutInflater;
@@ -32,26 +31,32 @@ public class ReminderAdapter
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(
+            @NonNull ViewGroup parent,
+            int viewType) {
         View view = layoutInflater.inflate(
                 R.layout.item_reminder,
                 parent,
                 false
         );
-        return new ViewHolder(view);
+        ViewHolder viewHolder = new ViewHolder(view);
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(
+            @NonNull RecyclerView.ViewHolder holder,
+            int position) {
+        ViewHolder reminderHolder = (ViewHolder) holder;
         Reminder reminder = list.get(position);
 
-        holder.orderId.setText("Order #" + reminder.getOrderId());
-        holder.message.setText(reminder.getMessage());
-        holder.dateTime.setText(reminder.getReminderDatetime());
-        holder.itemView.setOnClickListener(v ->
+        reminderHolder.orderId.setText("Order #" + reminder.getOrderId());
+        reminderHolder.message.setText(reminder.getMessage());
+        reminderHolder.dateTime.setText(reminder.getReminderDatetime());
+        reminderHolder.itemView.setOnClickListener(v ->
                 itemClickListener.onItemClick(
                         v,
-                        holder.getBindingAdapterPosition()
+                        reminderHolder.getBindingAdapterPosition()
                 ));
     }
 

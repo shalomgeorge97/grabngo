@@ -47,8 +47,7 @@ public class ReminderActivity extends AppCompatActivity
                     return insets;
                 });
 
-        RecyclerView recyclerView =
-                findViewById(R.id.rvReminders);
+        RecyclerView recyclerView = findViewById(R.id.rvReminders);
         recyclerView.setLayoutManager(
                 new LinearLayoutManager(this));
 

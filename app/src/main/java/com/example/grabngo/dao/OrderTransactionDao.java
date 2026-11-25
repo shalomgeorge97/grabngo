@@ -1,3 +1,4 @@
+//implemented by Ami
 package com.example.grabngo.dao;
 
 import androidx.room.Dao;
@@ -22,12 +23,6 @@ public interface OrderTransactionDao {
     @Insert
     void addOrderItems(List<OrderItem> items);
 
-    @Query("UPDATE `ORDERS` SET status = :newStatus WHERE order_id = :orderId")
-    int setOrderStatus(int orderId, String newStatus);
-
-    @Query("SELECT * FROM `ORDERS` WHERE order_id = :orderId")
-    Order getOrderById(int orderId);
-
     // Decrease food stock
     @Query("UPDATE FOOD_ITEM SET available_quantity = available_quantity - :quantity " +
             "WHERE food_id = :foodId AND :quantity > 0 " +
@@ -47,28 +42,6 @@ public interface OrderTransactionDao {
     @Query("UPDATE FOOD_ITEM SET available_quantity = available_quantity + :quantity " +
             "WHERE food_id = :foodId AND :quantity > 0")
     int increaseAvailableQuantity(int foodId, int quantity);
-
-//    /** Update a manager-controlled status and create its customer reminder atomically. */
-//    @Transaction
-//    public boolean updateOrderStatusAndCreateReminder(int orderId, String newStatus) {
-//        if (OrderStatus.REJECTED.equals(newStatus)) {
-//            return false;
-//        }
-//
-//        Order order = getOrderById(orderId);
-//        if (order == null || !OrderStatus.getAllowedNextStatuses(
-//                order.getStatus(), order.getFulfillmentType()).contains(newStatus)) {
-//            return false;
-//        }
-//
-//        int updated = setOrderStatus(orderId, newStatus);
-//        if (updated == 0) {
-//            return false;
-//        }
-//
-//        createStatusReminder(orderId, newStatus);
-//        return true;
-//    }
 
     // Place order and decrease food stock
     @Transaction

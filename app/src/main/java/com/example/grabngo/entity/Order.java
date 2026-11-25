@@ -1,3 +1,4 @@
+//implemented by Ami
 package com.example.grabngo.entity;
 
 import androidx.annotation.NonNull;

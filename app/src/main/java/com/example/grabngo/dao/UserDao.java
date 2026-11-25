@@ -1,4 +1,4 @@
-
+//implemented by Ami
 package com.example.grabngo.dao;
 
 import androidx.room.Dao;
@@ -16,6 +16,10 @@ public interface UserDao {
     @Insert
     long addUser(User user);
 
+    // Update an existing user for profile edit
+    @Update
+    void update(User user);
+
     // Get a user by ID for profile screen etc.
     @Query("SELECT * FROM USER WHERE user_id = :userId")
     User getUserById(int userId);
@@ -27,16 +31,6 @@ public interface UserDao {
     // Check whether email already exists during registration
     @Query("SELECT EXISTS(SELECT 1 FROM USER WHERE email = :email)")
     boolean isEmailExists(String email);
-
-    @Query("SELECT EXISTS(" +
-            "SELECT 1 FROM USER " +
-            "WHERE email = :email " +
-            "AND user_id != :userId)")
-    boolean isEmailUsedByAnotherUser(String email, int userId);
-
-    // Update an existing user for profile edit
-    @Update
-    void update(User user);
 
 }
 

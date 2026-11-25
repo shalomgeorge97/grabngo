@@ -4,7 +4,6 @@ package com.example.grabngo.database;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -74,6 +73,7 @@ public abstract class AppDatabase extends RoomDatabase {
         return appDatabase;
     }
 
+    // Insert seed data as a fallback in case inserting data through the Activities fails.
     public void insertSeedData(Context context) {
 
         SharedPreferences preferences =
@@ -301,7 +301,7 @@ public abstract class AppDatabase extends RoomDatabase {
         seedOrderItems.add(new OrderItem((int) orderId4, 1, 2, 8.00));
         seedOrderItems.add(new OrderItem((int) orderId5, 1, 2, 8.00));
 
-        orderTransactionDao().addOrderItems(seedOrderItems);
+        orderItemDao().addOrderItems(seedOrderItems);
 
         reminderDao().addReminder(new Reminder(
                 1,

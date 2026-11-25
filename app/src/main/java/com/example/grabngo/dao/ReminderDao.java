@@ -1,3 +1,4 @@
+//implemented by Ami
 package com.example.grabngo.dao;
 
 import androidx.room.Dao;
@@ -10,7 +11,6 @@ import com.example.grabngo.util.OrderStatus;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 @Dao
 public interface ReminderDao {
@@ -47,13 +47,9 @@ public interface ReminderDao {
         }
 
         String dateTime = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+                "yyyy-MM-dd HH:mm:ss").format(new Date());
         addReminder(new Reminder(orderId, status, message, dateTime));
     }
-
-    // Get reminders associated with a specific order
-    @Query("SELECT * FROM REMINDER WHERE order_id = :orderId")
-    List<Reminder> getRemindersByOrderId(int orderId);
 
     // Show only the newest reminder for each order belonging to this customer.
     @Query("SELECT R.* FROM REMINDER AS R " +
@@ -77,17 +73,4 @@ public interface ReminderDao {
             "WHERE order_id IN (SELECT order_id FROM ORDERS WHERE customer_id = :customerId)")
     void markCustomerRemindersAsRead(int customerId);
 
-//    // Mark a reminder as sent
-//    @Query("UPDATE REMINDER SET is_sent = 1 WHERE reminder_id = :reminderId")
-//    void markReminderAsSent(int reminderId);
-
-//    // Get unsent reminders
-//    @Query("SELECT * FROM REMINDER WHERE is_sent = 0")
-//    List<Reminder> getUnsentReminders();
-
-//    //Get Due Reminders
-//    @Query("SELECT * FROM REMINDER " +
-//            "WHERE is_sent = 0 " +
-//            "AND reminder_datetime <= :currentDateTime")
-//    List<Reminder> getDueReminders(String currentDateTime);
 }
