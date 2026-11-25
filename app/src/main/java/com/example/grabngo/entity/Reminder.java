@@ -1,3 +1,4 @@
+//implemented by Ami
 package com.example.grabngo.entity;
 
 import androidx.annotation.NonNull;
@@ -35,9 +36,6 @@ public class Reminder {
     @NonNull
     @ColumnInfo(name = "reminder_datetime")
     private String reminderDatetime;
-
-//    @ColumnInfo(name = "is_sent")
-//    private boolean isSent = false;
 
 
     // Tracks whether the customer has viewed the reminder
@@ -77,7 +75,6 @@ public class Reminder {
     @NonNull
     public String getReminderDatetime() { return reminderDatetime; }
 
-    //public boolean isSent() { return isSent; }
     public boolean isRead() { return isRead; }
 
 
@@ -99,10 +96,6 @@ public class Reminder {
     public void setReminderDatetime(@NonNull String reminderDatetime) {
         this.reminderDatetime = reminderDatetime;
     }
-
-//    public void setSent(boolean sent) {
-//        isSent = sent;
-//    }
 
     public void setRead(boolean read) {
         isRead = read;

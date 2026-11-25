@@ -1,3 +1,4 @@
+//implemented by Ami
 package com.example.grabngo.entity;
 
 import androidx.annotation.NonNull;
@@ -17,7 +18,7 @@ import androidx.room.PrimaryKey;
                 )
         },
         indices = {
-                // Index improves search performance when querying restaurants by Manager ID.
+
                 @Index(value = {"manager_id"}, unique = true)
         }
 )

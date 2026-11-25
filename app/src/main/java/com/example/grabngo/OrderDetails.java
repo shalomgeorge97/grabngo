@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.grabngo.adapter.OrderItemAdapter;
 import com.example.grabngo.dao.OrderDao;
 import com.example.grabngo.dao.OrderItemDao;
+import com.example.grabngo.dao.OrderTransactionDao;
 import com.example.grabngo.database.AppDatabase;
 import com.example.grabngo.entity.Order;
 import com.example.grabngo.entity.OrderItem;
@@ -45,6 +46,8 @@ public class OrderDetails extends AppCompatActivity {
     private AppDatabase db;
     private OrderDao orderDao;
     private OrderItemDao orderItemDao;
+
+    private OrderTransactionDao orderTransactionDao;
 
     private OrderItemAdapter itemAdapter;
     private RecyclerView rvItems;
@@ -318,7 +321,7 @@ public class OrderDetails extends AppCompatActivity {
         }
         for (OrderItem item : items) {
             if (item != null && item.getQuantity() > 0) {
-                db.foodItemDao().increaseAvailableQuantity(item.getFoodId(), item.getQuantity());
+                orderTransactionDao.increaseAvailableQuantity(item.getFoodId(), item.getQuantity());
             }
         }
     }
