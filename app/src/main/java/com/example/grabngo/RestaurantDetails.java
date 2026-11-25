@@ -266,4 +266,15 @@ public class RestaurantDetails extends AppCompatActivity {
         super.onDestroy();
         executor.shutdown();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (adapter != null) {
+            adapter.clearSelection();   // nothing selected when coming back
+        }
+        // reload the food list with the same call you use in onCreate,
+        // so the quantities left in stock are up to date
+        loadFoodItems(etSearchFood.getText().toString().trim());
+    }
 }

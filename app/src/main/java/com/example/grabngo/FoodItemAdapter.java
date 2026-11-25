@@ -74,10 +74,12 @@ public class FoodItemAdapter
 
         holder.tvDiscountedPrice.setText(
                 context.getString(R.string.price_format, food.getDiscountedPrice()));
-        holder.tvQtyLeft.setText(
-                context.getString(R.string.details_qty_left, food.getAvailableQuantity()));
+        // Quantity left = stock minus what the customer has already chosen
+        int selected = getQuantity(food.getFoodId());
+        holder.tvQtyLeft.setText(context.getString(
+                R.string.details_qty_left, food.getAvailableQuantity() - selected));
 
-        holder.tvQuantity.setText(String.valueOf(getQuantity(food.getFoodId())));
+        holder.tvQuantity.setText(String.valueOf(selected));
 
         // + : cannot go above the quantity left
         holder.btnPlus.setOnClickListener(v -> {
@@ -101,6 +103,12 @@ public class FoodItemAdapter
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    // Forgets all selected quantities (used when returning to the screen)
+    public void clearSelection() {
+        quantities.clear();
+        notifyDataSetChanged();
     }
 
     static class FoodViewHolder extends RecyclerView.ViewHolder {
