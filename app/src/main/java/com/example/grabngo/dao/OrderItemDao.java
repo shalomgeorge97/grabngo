@@ -17,11 +17,7 @@ public interface OrderItemDao {
     @Insert
     void addOrderItems(List<OrderItem> orderItems);
 
-    // Get all food items included in a specific order
-    @Query("SELECT * FROM ORDER_ITEM WHERE order_id = :orderId")
-    List<OrderItem> getOrderItemsByOrderId(int orderId);
-
-    // Get food item details for a specific order (Order Details screen)
+    // Get food item details within a specific order. For Order Details screen
     @Query("SELECT OI.food_id AS foodId, " +
             "FI.name AS foodName, " +
             "OI.quantity AS quantity, " +
