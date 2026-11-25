@@ -12,19 +12,18 @@ import java.util.List;
 @Dao
 public interface RestaurantDao {
 
-    // Insert a new restaurant
     @Insert
     long addRestaurant(Restaurant restaurant);
 
-    // Get all restaurants
     @Query("SELECT * FROM RESTAURANT")
     List<Restaurant> getAllRestaurants();
 
-    // Get a restaurant by ID
+    //For customer's restaurant details
     @Query("SELECT * FROM RESTAURANT WHERE restaurant_id = :restaurantId")
     Restaurant getRestaurantById(int restaurantId);
 
     // Get the restaurant assigned to a specific manager
+    //For manager's food list and order list
     @Query("SELECT * FROM RESTAURANT WHERE manager_id = :managerId")
     Restaurant getRestaurantByManagerId(int managerId);
 }

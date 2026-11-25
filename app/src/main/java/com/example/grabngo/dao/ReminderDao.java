@@ -15,11 +15,10 @@ import java.util.List;
 @Dao
 public interface ReminderDao {
 
-    // Save a reminder
     @Insert
     long addReminder(Reminder reminder);
 
-    // Create and save a reminder with a message based on the order status.
+    // Create and save reminder with a message.
     default void createStatusReminder(int orderId, String status) {
         String message;
         switch (status) {
@@ -51,7 +50,7 @@ public interface ReminderDao {
         addReminder(new Reminder(orderId, status, message, dateTime));
     }
 
-    // Show only the newest reminder for each order belonging to this customer.
+    // Show only the newest reminder for each order
     @Query("SELECT R.* FROM REMINDER AS R " +
             "INNER JOIN (SELECT order_id, MAX(reminder_id) AS latest_id " +
             "FROM REMINDER GROUP BY order_id) AS L ON R.reminder_id = L.latest_id " +
@@ -60,7 +59,8 @@ public interface ReminderDao {
             "ORDER BY R.reminder_id DESC")
     List<Reminder> getLatestRemindersByCustomerId(int customerId);
 
-    // Check whether any newest reminder is unread, one per order to switch bell icon.
+    // Check whether any newest reminder is unread.
+    // one per order for switching bell icon.
     @Query("SELECT EXISTS(SELECT 1 FROM REMINDER AS R " +
             "INNER JOIN (SELECT order_id, MAX(reminder_id) AS latest_id " +
             "FROM REMINDER GROUP BY order_id) AS L ON R.reminder_id = L.latest_id " +
@@ -68,7 +68,7 @@ public interface ReminderDao {
             "WHERE O.customer_id = :customerId AND R.is_read = 0)")
     boolean hasUnreadLatestReminder(int customerId);
 
-    // Opening the reminders screen marks this customer's reminders as read.
+    // When the cutomer opens the reminders screen, marks this customer's reminders as read.
     @Query("UPDATE REMINDER SET is_read = 1 " +
             "WHERE order_id IN (SELECT order_id FROM ORDERS WHERE customer_id = :customerId)")
     void markCustomerRemindersAsRead(int customerId);

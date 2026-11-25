@@ -32,27 +32,16 @@ public class ReminderActivity extends AppCompatActivity
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_reminders);
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-
-        ViewCompat.setOnApplyWindowInsetsListener(
-                findViewById(R.id.main),
-                (v, insets) -> {
-                    Insets systemBars =
-                            insets.getInsets(
-                                    WindowInsetsCompat.Type.systemBars());
-                    v.setPadding(
-                            systemBars.left,
-                            systemBars.top,
-                            systemBars.right,
-                            systemBars.bottom);
-                    return insets;
-                });
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         RecyclerView recyclerView = findViewById(R.id.rvReminders);
-        recyclerView.setLayoutManager(
-                new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        SharedPreferences preferences =
-                getSharedPreferences("GrabNGoSession", MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("GrabNGoSession", MODE_PRIVATE);
         int customerId = preferences.getInt("user_id", -1);
 
         if (customerId > 0) {
@@ -64,10 +53,7 @@ public class ReminderActivity extends AppCompatActivity
                     .markCustomerRemindersAsRead(customerId);
         }
 
-        adapter = new ReminderAdapter(
-                this,
-                reminderList,
-                this::onItemClick);
+        adapter = new ReminderAdapter(this, reminderList, this::onItemClick);
         recyclerView.setAdapter(adapter);
     }
 

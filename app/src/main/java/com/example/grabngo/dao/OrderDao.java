@@ -14,11 +14,9 @@ import java.util.List;
 @Dao
 public interface OrderDao {
 
-    // Create a new order
     @Insert
     long addOrder(Order order);
 
-    //Get active orders
     @Query("SELECT * FROM ORDERS " +
             "WHERE customer_id = :customerId " +
             "AND status IN ('" + OrderStatus.PENDING + "', '" + OrderStatus.ACCEPTED +
@@ -26,7 +24,6 @@ public interface OrderDao {
             "ORDER BY order_id DESC")
     List<Order> getActiveOrdersByCustomerId(int customerId);
 
-    //Get past orders
     @Query("SELECT * FROM ORDERS " +
             "WHERE customer_id = :customerId " +
             "AND status IN ('" + OrderStatus.PICKED_UP + "', '" + OrderStatus.DELIVERED +
@@ -34,14 +31,14 @@ public interface OrderDao {
             "ORDER BY order_id DESC")
     List<Order> getPastOrdersByCustomerId(int customerId);
 
-    // Get a specific order by ID
     @Query("SELECT * FROM ORDERS WHERE order_id = :orderId")
     Order getOrderById(int orderId);
 
-    @Query("UPDATE `ORDERS` SET status = :status WHERE order_id = :orderId")
+    @Query("UPDATE ORDERS SET status = :status WHERE order_id = :orderId")
     int updateOrderStatus(int orderId, String status);
 
-    // Get customer and order information for the manager's order list and order details.
+    // Get customer info and order information.
+    // For the manager's order list and order details screen.
     @Query("SELECT O.order_id AS orderId, " +
             "O.customer_id AS customerId, " +
             "U.name AS customerName, " +

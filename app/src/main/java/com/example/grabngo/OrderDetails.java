@@ -176,9 +176,7 @@ public class OrderDetails extends AppCompatActivity {
                 return;
             }
 
-            // >>> START: Ami's implementation - Reminder functionality
             applyStatusTransition(selectedStatus, false);
-            // <<< END: Ami's implementation
         });
     }
 
@@ -247,10 +245,10 @@ public class OrderDetails extends AppCompatActivity {
                         restoreStockForOrder(targetOrderId);
                     }
 
-                    // >>> START: Ami's implementation - Reminder functionality
-                    // Save the reminder with the status update in this transaction.
+                    // >>> START: implemented by Ami - Reminder function
+                    // Save the reminder with the status update
                     db.reminderDao().createStatusReminder(targetOrderId, targetStatus);
-                    // <<< END: Ami's implementation
+                    // <<< END: implemented by Ami
                     return true;
                 });
 
