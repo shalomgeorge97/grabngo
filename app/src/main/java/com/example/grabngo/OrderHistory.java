@@ -113,7 +113,7 @@ public class OrderHistory extends AppCompatActivity {
         loadOrders();
     }
 
-    // shows a message instead of an empty screen when there are no orders
+    // shows a message when there are no orders
     private void updateEmptyState() {
         findViewById(R.id.tvEmpty).setVisibility(
                 orderList.isEmpty() ? View.VISIBLE : View.GONE);

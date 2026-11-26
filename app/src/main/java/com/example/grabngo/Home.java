@@ -116,7 +116,7 @@ public class Home extends AppCompatActivity {
 
     }
 
-    // Reads restaurants and their food counts from the database (background thread)
+    // Reads restaurants and their food counts from the database
     private void loadRestaurants() {
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
