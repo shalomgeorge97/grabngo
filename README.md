@@ -10,10 +10,10 @@ CSIS 3175, Group 2, Fall 2026.
 ## Team
 | Member | Area |
 |---|---|
-| Ami | Database layer (entities, DAOs, repositories, seed data) |
+| Ami | Database layer (entities, DAOs, repositories, seed data), Notifications |
 | Jenu | Customer screens, theme and styles |
-| Shalom | Restaurant manager screens, navigation |
-| Gabriel | Auth, profile, session, reminder notifications, password recovery |
+| Shalom | Restaurant manager screens, Project management |
+| Gabriel | Auth, profile, session, reminder notifications, navigation |
 
 ## Tech
 - Android Studio, Java, minimum SDK 26+
