@@ -86,7 +86,6 @@ public class Payment extends AppCompatActivity {
         toggleOrderType = findViewById(R.id.toggleOrderType);
     }
 
-    // Adds one row per food and calculates the total
 
     // Loads each food from the database, then shows one row per food and the total
     private void showOrderSummary() {
@@ -189,7 +188,7 @@ public class Payment extends AppCompatActivity {
         String date = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
                 .format(new Date());
 
-        // Note: card details are only validated here, never saved anywhere.
+        // card details are only validated here, never saved anywhere.
         executor.execute(() -> {
             List<OrderItem> items = new ArrayList<>();
             for (int i = 0; i < foods.size(); i++) {

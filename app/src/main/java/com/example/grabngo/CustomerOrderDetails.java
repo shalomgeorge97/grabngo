@@ -82,7 +82,7 @@ public class CustomerOrderDetails extends AppCompatActivity {
         loadOrder();
     }
 
-    // Reads the order, its items and the restaurant name (background thread)
+    // Reads the order, its items and the restaurant name
     private void loadOrder() {
         int customerId = new SessionManager(this).getUserId();
 

@@ -69,7 +69,7 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <!-- Simple text trail for now; swap for a stepper view later if wanted -->
+
         <TextView
             android:id="@+id/tvStatusTrail"
             android:layout_width="match_parent"
@@ -89,7 +89,7 @@
             android:textStyle="bold"
             android:visibility="gone"/>
 
-        <!-- Rows added in code; the placeholder below is swapped out once reminders load -->
+
         <LinearLayout
             android:id="@+id/remindersContainer"
             android:layout_width="match_parent"

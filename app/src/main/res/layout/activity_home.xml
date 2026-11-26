@@ -95,7 +95,7 @@
 
 
 
-<!--     Bottom navigation (add after the menu file exists) -->
+<!--     Bottom navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
