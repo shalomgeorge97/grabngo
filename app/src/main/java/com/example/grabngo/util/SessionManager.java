@@ -1,4 +1,3 @@
-
 package com.example.grabngo.util;
 
 import android.content.Context;
@@ -22,7 +21,7 @@ public class SessionManager {
                 .getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    // Save the logged-in user's ID and role.
+
     public boolean saveSession(int userId, String role) {
 
         String normalizedRole = normalizeRole(role);
@@ -37,23 +36,23 @@ public class SessionManager {
                 .commit();
     }
 
-    // Get saved user ID.
+
     public int getUserId() {
         return preferences.getInt(KEY_USER_ID, -1);
     }
 
-    // Get saved user role.
+
     public String getUserRole() {
         return preferences.getString(KEY_USER_ROLE, "");
     }
 
-    // Check whether a valid session exists.
+
     public boolean hasActiveSession() {
         return getUserId() > 0
                 && isSupportedRole(getUserRole());
     }
 
-    // Clear session when logging out.
+
     public boolean clearSession() {
         return preferences.edit()
                 .remove(KEY_USER_ID)

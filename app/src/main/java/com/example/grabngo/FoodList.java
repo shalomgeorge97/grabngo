@@ -59,7 +59,7 @@ public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoo
         super.onCreate(savedInstanceState);
 
         sessionManager = new SessionManager(getApplicationContext());
-//        check app session status
+//         check app session status
         if (!sessionManager.hasActiveSession()
                 || !SessionManager.ROLE_MANAGER.equals(sessionManager.getUserRole())) {
             openWelcome();
@@ -107,7 +107,7 @@ public class FoodList extends AppCompatActivity implements FoodListAdapter.OnFoo
             bottomNav.setSelectedItemId(R.id.nav_food);
         }
 
-        // Refresh the food list.
+        // Refresh the food list in case they changed while another screen was open.
         if (restaurantId != -1) {
             reloadFoods();
         }

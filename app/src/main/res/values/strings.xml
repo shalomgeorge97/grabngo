@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">GrabNGo</string>
 
-    <!-- Shared labels -->
+    <!-- Shared labels and actions -->
     <string name="label_name">Name</string>
     <string name="label_email">Email</string>
     <string name="label_password">Password</string>

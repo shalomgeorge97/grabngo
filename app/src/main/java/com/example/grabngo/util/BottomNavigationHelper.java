@@ -21,7 +21,7 @@ import com.google.android.material.navigation.NavigationBarView;
 public final class BottomNavigationHelper {
 
     private BottomNavigationHelper() {
-        // Prevent creating instances of this utility class.
+
     }
 
     public static void configure(
@@ -41,7 +41,7 @@ public final class BottomNavigationHelper {
                 SessionManager.ROLE_MANAGER.equals(
                         sessionManager.getUserRole());
 
-        // Load the correct navigation menu.
+
         bottomNavigationView.getMenu().clear();
 
         if (isManager) {
@@ -52,13 +52,12 @@ public final class BottomNavigationHelper {
                     R.menu.menu_customer_bottom_nav);
         }
 
-        // Apply consistent appearance to every screen.
         applyNavigationStyle(activity, bottomNavigationView);
 
-        // Select the current screen.
+
         bottomNavigationView.setSelectedItemId(selectedItemId);
 
-        // Handle navigation selections.
+
         bottomNavigationView.setOnItemSelectedListener(item -> {
 
             Class<?> destination = getDestination(
@@ -68,7 +67,7 @@ public final class BottomNavigationHelper {
                 return false;
             }
 
-            // Stay on the current screen if already selected.
+            // Don't reopen the screen if the user taps its selected tab.
             if (destination.equals(activity.getClass())) {
                 return true;
             }
@@ -95,7 +94,7 @@ public final class BottomNavigationHelper {
         int white = ContextCompat.getColor(
                 activity, R.color.surface);
 
-        // Apply selected and unselected colors.
+
         ColorStateList itemColors =
                 ContextCompat.getColorStateList(
                         activity, R.color.bottom_nav_tint);
@@ -103,22 +102,22 @@ public final class BottomNavigationHelper {
         bottomNavigationView.setItemIconTintList(itemColors);
         bottomNavigationView.setItemTextColor(itemColors);
 
-        // Keep labels visible on all screens.
+
         bottomNavigationView.setLabelVisibilityMode(
                 NavigationBarView.LABEL_VISIBILITY_LABELED);
 
-        // Standardize icon dimensions.
+
         bottomNavigationView.setItemIconSize(
                 dp(activity, 24));
 
-        // Standardize vertical spacing.
+
         bottomNavigationView.setItemPaddingTop(
                 dp(activity, 6));
 
         bottomNavigationView.setItemPaddingBottom(
                 dp(activity, 6));
 
-        // Highlight the selected navigation item.
+
         bottomNavigationView.setItemActiveIndicatorEnabled(true);
 
         bottomNavigationView.setItemActiveIndicatorColor(
@@ -130,19 +129,19 @@ public final class BottomNavigationHelper {
         bottomNavigationView.setItemActiveIndicatorHeight(
                 dp(activity, 32));
 
-        // Subtle selection ripple.
+
         bottomNavigationView.setItemRippleColor(
                 ColorStateList.valueOf(lightGreen));
 
-        // Consistent background and elevation.
+
         bottomNavigationView.setBackgroundColor(white);
         bottomNavigationView.setElevation(dp(activity, 8));
 
-        // Prevent labels and icons from shifting horizontally.
+        // Keep navigation items in place when the selected tab changes.
         bottomNavigationView.setItemHorizontalTranslationEnabled(false);
 
-        // Apply the Android system navigation-bar inset
-        // inside the bottom navigation instead of the entire root.
+        // Apply the system navigation-bar inset here so it doesn't
+        // add extra padding to the entire screen.
         final int initialLeft = bottomNavigationView.getPaddingLeft();
         final int initialTop = bottomNavigationView.getPaddingTop();
         final int initialRight = bottomNavigationView.getPaddingRight();

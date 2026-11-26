@@ -221,6 +221,7 @@ public class OrderList extends AppCompatActivity {
         if (filterButtonId == R.id.btnPending) {
             return OrderStatus.PENDING.equalsIgnoreCase(normalized);
         }
+        // accept both plain status labels and the values defined in OrderStatus.
         if (filterButtonId == R.id.btnAccepted) {
             return "ACCEPTED".equals(normalized) || OrderStatus.ACCEPTED.equalsIgnoreCase(normalized);
         }

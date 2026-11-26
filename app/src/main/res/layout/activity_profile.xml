@@ -9,7 +9,7 @@
     android:background="@color/white"
     tools:context=".Profile">
 
-    <!-- Scrollable Profile Content -->
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -168,7 +168,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Role-Based Bottom Navigation -->
+    <!-- Navigation options are set based on the user's role. -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
