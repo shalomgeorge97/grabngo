@@ -12,7 +12,7 @@ CSIS 3175, Group 2, Fall 2026.
 |---|---|
 | Ami | Database layer (entities, DAOs, repositories, seed data), Notifications |
 | Jenu | Customer screens, theme and styles |
-| Shalom | Restaurant manager screens, Project management |
+| Shalom | Restaurant manager screens, project management |
 | Gabriel | Auth, profile, session, reminder notifications, navigation |
 
 ## Tech
@@ -23,7 +23,6 @@ CSIS 3175, Group 2, Fall 2026.
 ## Getting started
 1. Clone the repo and open the project folder in Android Studio.
 2. Let Gradle sync, then run on an emulator (API 34 recommended).
-3. Demo accounts are created by the seed data (see `docs/demo-accounts.md`).
 
 ## Workflow
 - Never commit directly to `main`. Create a branch per issue: `feature/<issue-number>-short-name`.
