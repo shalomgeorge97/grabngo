@@ -75,6 +75,7 @@ public class Login extends AppCompatActivity {
 
         btnLogin.setEnabled(false);
 
+        // Run the database in the background.
         databaseExecutor.execute(() -> {
 
             User user = null;
@@ -98,6 +99,7 @@ public class Login extends AppCompatActivity {
                     authenticatedUser != null
                             && authenticatedUser.getPassword() != null
                             && (
+                            // Support older accounts that still use plain-text passwords.
                             PasswordHasher.isHashed(authenticatedUser.getPassword())
                                     ? PasswordHasher.verify(
                                     password,

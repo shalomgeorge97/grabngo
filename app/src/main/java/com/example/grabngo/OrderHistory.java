@@ -66,7 +66,7 @@ public class OrderHistory extends AppCompatActivity {
         rvOrderHistory.setAdapter(adapter);
     }
 
-    // Reads the logged-in customer's orders: active ones first, then past ones
+    // load active orders first, followed by the customer's past orders.
     private void loadOrders() {
         int customerId = new SessionManager(this).getUserId();
         executor.execute(() -> {
@@ -113,7 +113,7 @@ public class OrderHistory extends AppCompatActivity {
         loadOrders();
     }
 
-    // Shows a message instead of an empty screen when there are no orders
+    // shows a message instead of an empty screen when there are no orders
     private void updateEmptyState() {
         findViewById(R.id.tvEmpty).setVisibility(
                 orderList.isEmpty() ? View.VISIBLE : View.GONE);
@@ -131,7 +131,7 @@ public class OrderHistory extends AppCompatActivity {
         );
     }
 
-    // Temporary test data only, so the design can be checked
+
 
 
 }

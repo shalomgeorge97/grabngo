@@ -195,7 +195,7 @@ public class Register extends Activity {
             }
         }
 
-        // Save the validated registration.
+
         saveRegistration(
                 name,
                 email,
@@ -241,10 +241,10 @@ public class Register extends Activity {
                 final String finalRestaurantAddress = restaurantAddress;
                 final String finalRestaurantCity = restaurantCity;
 
-                // Save the user and restaurant in one transaction.
+                // save the account and its restaurant together.
                 createdUserId = database.runInTransaction(() -> {
 
-                    // Check whether the email already exists.
+                    // don't allow an email to register twice.
                     if (database.userDao().isEmailExists(email)) {
                         return -1L;
                     }
@@ -266,7 +266,7 @@ public class Register extends Activity {
                                 "Unable to create user account.");
                     }
 
-                    // Create the restaurant for a manager.
+
                     if (!isCustomer) {
 
                         Restaurant newRestaurant = new Restaurant(

@@ -132,7 +132,7 @@ public class Profile extends AppCompatActivity {
 
             try {
                 AppDatabase database = AppDatabase.getDatabase(getApplicationContext());
-                    // Reload the row on the worker thread, then update the database record.
+                // reload the latest user record before applying profile changes
                     updatedUser = database.userDao().getUserById(currentUserId);
                     if (updatedUser != null) {
 
@@ -190,7 +190,7 @@ public class Profile extends AppCompatActivity {
     }
 
     private void logout() {
-        // Clear the ID and role before leaving the authenticated part of the app.
+        // clear the saved session before returning to the welcome screen.
         sessionManager.clearSession();
         openWelcomeAndClearBackStack();
     }
