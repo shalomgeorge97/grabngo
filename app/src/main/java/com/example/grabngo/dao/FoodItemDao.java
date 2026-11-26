@@ -14,28 +14,24 @@ import java.util.List;
 @Dao
 public interface FoodItemDao {
 
-    // Add a new food item
     @Insert
     void addFoodItem(FoodItem foodItem);
 
-
-    // Update an existing food item
     @Update
     void updateFoodItem(FoodItem foodItem);
 
-    // Delete a food item
     @Delete
     void deleteFoodItem(FoodItem foodItem);
 
-    // Get all food items from a specific restaurant
+    // Get food items from specific restaurant. For manager's food list.
     @Query("SELECT * FROM FOOD_ITEM WHERE restaurant_id = :restaurantId")
     List<FoodItem> getFoodItemsByRestaurantId(int restaurantId);
 
-    // Get a food item by ID
+    // Get food item by food ID.
     @Query("SELECT * FROM FOOD_ITEM WHERE food_id = :foodId")
     FoodItem getFoodItemById(int foodId);
 
-    // Search food items by name within a specific restaurant
+    // Search food items by name within specific restaurant
     @Query("SELECT * FROM FOOD_ITEM WHERE restaurant_id = :restaurantId AND name LIKE '%' || :keyword || '%'")
     List<FoodItem> searchFoodItemsByName(int restaurantId, String keyword);
 

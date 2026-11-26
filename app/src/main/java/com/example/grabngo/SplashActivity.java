@@ -18,6 +18,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        // Initialize the database after the content view is ready.
         findViewById(android.R.id.content).post(new Runnable() {
             @Override
             public void run() {
@@ -30,13 +31,10 @@ public class SplashActivity extends AppCompatActivity {
         try {
 
             // Get database instance
-            AppDatabase database =
-                    AppDatabase.getDatabase(getApplicationContext());
+            AppDatabase database = AppDatabase.getDatabase(getApplicationContext());
 
-            // Insert seed data
             database.insertSeedData(getApplicationContext());
 
-            // Check session and navigate
             checkSessionAndNavigate();
 
         } catch (Exception exception) {
@@ -44,8 +42,7 @@ public class SplashActivity extends AppCompatActivity {
             Toast.makeText(
                     SplashActivity.this,
                     "Failed to initialize the database.",
-                    Toast.LENGTH_LONG
-            ).show();
+                    Toast.LENGTH_LONG).show();
 
             finish();
         }
@@ -54,8 +51,7 @@ public class SplashActivity extends AppCompatActivity {
     private void checkSessionAndNavigate() {
 
         // Get saved session
-        SharedPreferences preferences =
-                getSharedPreferences("GrabNGoSession", MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("GrabNGoSession", MODE_PRIVATE);
 
         int userId = preferences.getInt("user_id", -1);
         String role = preferences.getString("user_role", "");
@@ -75,7 +71,7 @@ public class SplashActivity extends AppCompatActivity {
             intent = new Intent(SplashActivity.this, Welcome.class);
         }
 
-        // Navigate to the destination
+        // Navigate to the destination based on the role
         startActivity(intent);
         finish();
     }

@@ -60,27 +60,27 @@ public class Home extends AppCompatActivity {
         setupRestaurantList();
         setupBottomNavigation();
 
-        // >>> START: Ami's implementation - Reminder functionality
-        updateUnreadReminderDot();
+        // >>> START: implemented by Ami - Reminder function
+        updateUnreadReminder();
 
-        ImageView reminderButton = findViewById(R.id.btnReminders);
+        ImageView reminderBtn = findViewById(R.id.btnReminders);
         findViewById(R.id.btnReminders).setOnClickListener(v -> {
-            reminderButton.setImageResource(R.drawable.bell);
+            reminderBtn.setImageResource(R.drawable.bell);
             startActivity(new Intent(Home.this, ReminderActivity.class));
         });
-        // <<< END: Ami's implementation
+        // <<< END: implemented by Ami
     }
 
     // Implemented by Ami
-    private void updateUnreadReminderDot() {
+    private void updateUnreadReminder() {
         SharedPreferences preferences = getSharedPreferences(
                 "GrabNGoSession", MODE_PRIVATE);
-        int customerId = preferences.getInt("user_id", -1);
+        int custId = preferences.getInt("user_id", -1);
 
         boolean hasUnreadReminder = false;
-        if (customerId > 0) {
+        if (custId > 0) {
             hasUnreadReminder = AppDatabase.getDatabase(getApplicationContext())
-                    .reminderDao().hasUnreadLatestReminder(customerId);
+                    .reminderDao().hasUnreadLatestReminder(custId);
         }
 
         ImageView reminderButton = findViewById(R.id.btnReminders);

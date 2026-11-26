@@ -132,8 +132,8 @@ public abstract class AppDatabase extends RoomDatabase {
 
         Restaurant restaurant1 = new Restaurant(
                 (int) managerId1,
-                "Vancouver Sushi",
-                "100 Robson Street",
+                "Sakura Sushi",
+                "905-433 Robson Street",
                 "Vancouver",
                 "604-111-1111",
                 "09:00-20:00",
@@ -146,7 +146,7 @@ public abstract class AppDatabase extends RoomDatabase {
         Restaurant restaurant2 = new Restaurant(
                 (int) managerId2,
                 "Fresh Bowl Cafe",
-                "200 Granville Street",
+                "447 Royal Street",
                 "Vancouver",
                 "604-222-2222",
                 "08:00-18:00",
@@ -158,8 +158,8 @@ public abstract class AppDatabase extends RoomDatabase {
 
         Restaurant restaurant3 = new Restaurant(
                 (int) managerId3,
-                "Downtown Bakery",
-                "300 Main Street",
+                "Happy Bakery",
+                "315 E 25th Avenue",
                 "Vancouver",
                 "604-333-3333",
                 "07:00-17:00",
@@ -209,9 +209,9 @@ public abstract class AppDatabase extends RoomDatabase {
         foodItemDao().addFoodItem(new FoodItem(
                 (int) restaurantId2,
                 "Vegetable Salad",
-                "Fresh mixed vegetable salad",
+                "Mixed vegetable salad",
                 "Meals",
-                "Lettuce, Tomato, Cucumber",
+                "Lettuce, Tomato, Cucumber, beans",
                 12.00,
                 7.00,
                 5,
@@ -234,7 +234,7 @@ public abstract class AppDatabase extends RoomDatabase {
         foodItemDao().addFoodItem(new FoodItem(
                 (int) restaurantId3,
                 "Muffins (2 pcs)",
-                "Two freshly baked muffins",
+                "Two baked muffins",
                 "Bakery",
                 "Wheat, Eggs, Milk",
                 8.00,
@@ -249,7 +249,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 1,
                 "2026-11-22 10:06",
                 OrderStatus.FULFILLMENT_PICKUP,
-                OrderStatus.PENDING,
+                OrderStatus.READY,
                 16.00,
                 null
         ));

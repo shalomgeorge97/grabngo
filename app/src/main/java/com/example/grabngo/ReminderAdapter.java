@@ -20,9 +20,7 @@ public class ReminderAdapter extends RecyclerView.Adapter {
     private final LayoutInflater layoutInflater;
     private final ItemClickListener itemClickListener;
 
-    public ReminderAdapter(
-            Context context,
-            List<Reminder> reminders,
+    public ReminderAdapter(Context context, List<Reminder> reminders,
             ItemClickListener clickListener) {
         list = reminders;
         itemClickListener = clickListener;
@@ -31,43 +29,23 @@ public class ReminderAdapter extends RecyclerView.Adapter {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(
-            @NonNull ViewGroup parent,
-            int viewType) {
-        View view = layoutInflater.inflate(
-                R.layout.item_reminder,
-                parent,
-                false
-        );
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = layoutInflater.inflate(R.layout.item_reminder, parent,
+                false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(
-            @NonNull RecyclerView.ViewHolder holder,
-            int position) {
-        ViewHolder reminderHolder = (ViewHolder) holder;
-        Reminder reminder = list.get(position);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        reminderHolder.orderId.setText("Order #" + reminder.getOrderId());
-        reminderHolder.message.setText(reminder.getMessage());
-        reminderHolder.dateTime.setText(reminder.getReminderDatetime());
-        reminderHolder.itemView.setOnClickListener(v ->
-                itemClickListener.onItemClick(
-                        v,
-                        reminderHolder.getBindingAdapterPosition()
-                ));
+        ((ViewHolder) holder).orderId.setText("Order #" + list.get(position).getOrderId());
+        ((ViewHolder) holder).message.setText(list.get(position).getMessage());
+        ((ViewHolder) holder).dateTime.setText(list.get(position).getReminderDatetime());
     }
 
     @Override
-    public int getItemCount() {
-        return list.size();
-    }
-
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
-    }
+    public int getItemCount() {return list.size();}
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView orderId;
@@ -79,6 +57,18 @@ public class ReminderAdapter extends RecyclerView.Adapter {
             orderId = itemView.findViewById(R.id.tvReminderOrderId);
             message = itemView.findViewById(R.id.tvReminderMessage);
             dateTime = itemView.findViewById(R.id.tvReminderDateTime);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClickListener
+                            .onItemClick(v, getBindingAdapterPosition());
+                }
+            });
         }
+    }
+
+    public interface ItemClickListener {
+        void onItemClick(View view, int position);
     }
 }
